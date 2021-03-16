@@ -62,6 +62,7 @@ library(tidyr)
 library(readr)
 library(stringr)
 library(ggplot2)
+library(purrr)
 
 # tidyverse-friendly packages
 library(plotly)
@@ -69,6 +70,7 @@ library(ggrepel)
 library(GGally)
 library(tidyHeatmap)
 library(tidybulk)
+library(tidySummarizedExperiment)
 ```
 
 Plot settings. Set the colours and theme we will use for our plots.
@@ -110,31 +112,127 @@ In this workshop we will be using the tidyverse pipe `%>%`. This 'pipes' the out
 # load airway RNA sequencing data
 data(airway)
 
-# convert to tidybulk tibble
-counts_airway <-
-  airway %>%
-  tidybulk()
-
-# take a look
-counts_airway
 ```
 
 
-The `counts_airway` object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.
+The `airway` object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.
 We can shorten the sample names. We can remove the SRR1039 prefix that's present in all of them, as shorter names can fit better in some of the plots we will create. We can use `mutate()` together with `str_replace()` to remove the SRR1039 string from the sample column.
 We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db` and add them as a column using `mutate` again.
 With tidyverse, all above steps can be linked with the `%>%`, as shown below. This has the benefits that
 * no temporary variables need to be created
 * less typing is required
 * the steps can be seen more clearly.
+
+## tidySummarizedExperiment
+
+`tidySummarizedExperiment` allows `SummarizedExperiment` object to be displayed and manipulated with tidy principles, without affecting any `SummarizedExperiment` behaviour.
+
+**It looks like a tibble**
+
+```{r}
+airway
+```
+
+**But it is a SummarizedExperiment object after all**
+
+```{r}
+assays(airway)
+```
+
+## Tidyverse commands
+
+We can use tidyverse commands to explore the tidy SummarizedExperiment object.
+
+We can use `slice` to choose rows by position, for example to choose the first row.
+
+```{r}
+airway %>% slice(1)
+```
+
+We can use `filter` to choose rows by criteria.
+
+```{r}
+airway %>% filter(dex == "untrt")
+```
+
+We can use `select` to choose columns.
+
+```{r}
+airway %>% select(sample)
+```
+
+We can use `count` to count how many rows we have for each sample.
+
+```{r}
+airway %>% count(sample)
+```
+
+We can use `distinct` to see what distinct sample information we have.
+
+```{r}
+airway %>% distinct(sample, dex, cell)
+```
+
+We could use `rename` to rename a column. For example, to modify the type column name.
+
+```{r}
+airway %>% rename(treatment_status=dex)
+```
+
+We could use `mutate` to create a column. For example, we could create a new type column that contains single
+and paired instead of single_end and paired_end.
+
+```{r}
+airway %>% mutate(type=str_remove(sample, "SRR1039"))
+```
+
+We could use `unite` to combine multiple columns into a single column.
+
+```{r}
+airway %>% unite("combined", c(dex, cell))
+```
+
+We can also combine commands with the tidyverse pipe `%>%`.
+
+For example, we could combine `group_by` and `summarise` to get the total counts for each sample.
+
+```{r}
+airway %>%
+    group_by(sample) %>%
+    summarise(total_counts=sum(counts))
+```
+
+We could combine `group_by`, `mutate` and `filter` to get the transcripts with mean count > 0.
+
+```{r}
+airway %>%
+    group_by(seqnames ) %>%
+    mutate(mean_count=mean(counts)) %>%
+    filter(mean_count > 0)
+```
+
+
+## Plotting
+
+We can treat `airway` as a normal tibble for plotting. Here we plot the distribution of counts per sample.
+
+```{r plot1}
+airway %>%
+    ggplot(aes(counts + 1, group=sample, color=`dex`)) +
+    geom_density() +
+    scale_x_log10() +
+    custom_theme
+```
+
+
+
 ```{r}
 # setup data workflow
 counts_tt <-
   airway %>%
-  tidybulk() %>%
-  mutate(sample = str_remove(sample, "SRR1039")) %>%
+  mutate(sample_name = str_remove(sample, "SRR1039")) %>%
   mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
-    keys = as.character(feature),
+    keys = transcript,
     keytype = "ENSEMBL",
     column = "SYMBOL",
     multiVals = "first"
@@ -182,7 +280,7 @@ counts_scaled %>%
   pivot_longer(cols = c("counts", "counts_scaled"), names_to = "source", values_to = "abundance") %>%
 
   # Plotting
-  ggplot(aes(x = abundance + 1, color = sample)) +
+  ggplot(aes(x = abundance + 1, color = sample_name)) +
   geom_density() +
   facet_wrap(~source) +
   scale_x_log10() +
@@ -198,7 +296,6 @@ As tidybulk smoothly integrates with ggplot2 and other tidyverse packages it can
 ```{r eval=FALSE}
 # tidybulk
 airway %>%
-  tidybulk() %>%
   keep_abundant(factor_of_interest = dex) %>%
   scale_abundance() %>%
   pivot_longer(cols = c("counts", "counts_scaled"), names_to = "source", values_to = "abundance") %>%
@@ -285,7 +382,7 @@ counts_scal_PCA %>%
   pivot_sample() %>%
   ggplot(aes(x = PC1, y = PC2, colour = dex, shape = cell)) +
   geom_point() +
-  geom_text_repel(aes(label = sample), show.legend = FALSE) +
+  geom_text_repel(aes(label = sample_name), show.legend = FALSE) +
   custom_theme
 ```
 
@@ -301,11 +398,12 @@ counts_scal_PCA %>%
 
   # extract 500 most variable genes
   keep_variable(.abundance = counts_scaled, top = 500) %>%
-
+  as_tibble() %>%
+  
   # create heatmap
   heatmap(
-    .column = sample,
-    .row = feature,
+    .column = sample_name,
+    .row = transcript,
     .value = counts_scaled,
     transform = log1p
   ) %>%
@@ -390,7 +488,7 @@ We can visually compare the significance for all methods. We will notice that th
 ```{r message=FALSE}
 de_all %>%
   pivot_transcript() %>%
-  select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, feature) %>%
+  select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, transcript) %>%
   ggpairs(1:4)
 ```
 
@@ -401,7 +499,7 @@ We can count how many differentially expressed genes there are, for example with
 ```{r}
 de_all %>%
   filter(edgerQLT_FDR < 0.05) %>%
-  summarise(num_de = n_distinct(feature))
+  summarise(num_de = n_distinct(transcript))
 ```
 
 ### Single method
@@ -498,19 +596,16 @@ If we are sequencing tissue samples, we may want to know what cell types are pre
 For this example we will use a subset of the breast cancer dataset from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/tcga). 
 
 ```{r}
-BRCA_tidy <-
-  bioc2021tidytranscriptomics::BRCA %>%
-  tidybulk(patient, transcript, count)
-
-BRCA_tidy
+BRCA <- bioc2021tidytranscriptomics::BRCA 
+BRCA
 ```
 
 With tidybulk, we can easily infer the proportions of cell types within a tissue using one of several published methods (Cibersort [@newman2015robust], EPIC [@racle2017simultaneous] and llsr [@abbas2009deconvolution]). Here we will use Cibersort which provides a default signature called LM22 to define the cell types. LM22 contains 547 genes that identify 22 human immune cell types.
 
 ```{r}
 BRCA_cell_type <-
-  BRCA_tidy %>%
-  deconvolve_cellularity(action = "get", cores = 1)
+  BRCA %>%
+  deconvolve_cellularity(prefix="cibersort: ", cores = 1)
 
 BRCA_cell_type
 ```
@@ -520,7 +615,8 @@ Cell type proportions are added to the tibble as new columns. The prefix makes i
 ```{r}
 BRCA_cell_type_long <-
   BRCA_cell_type %>%
-
+  pivot_sample() %>%
+  
   # Reshape
   pivot_longer(
     contains("cibersort"),
@@ -538,7 +634,7 @@ We can plot the proportions of immune cell types for each patient.
 BRCA_cell_type_long %>%
 
   # Plot proportions
-  ggplot(aes(x = patient, y = proportion, fill = cell_type)) +
+  ggplot(aes(x = sample, y = proportion, fill = cell_type)) +
   geom_bar(stat = "identity") +
   custom_theme
 ```
@@ -549,17 +645,19 @@ We can visualise the similarity of the tissue composition for the patients by pe
 BRCA_cell_type_long %>%
 
   # Filter cell types with proportion zero in all patients
-  group_by(cell_type) %>%
-  filter(sum(proportion) > 0) %>%
-  ungroup() %>%
+  nest(data = -cell_type) %>%
+  filter(map_dbl(data, ~ sum(.x$proportion)) > 0) %>%
+  unnest(data) %>%
+  
+  # Reduce dimensions
   reduce_dimensions(
-    patient,
+    sample,
     cell_type,
     proportion,
-    method = "PCA",
-    action = "get"
+    method = "PCA"
   ) %>%
-  ggplot(aes(PC1, PC2, label = patient)) +
+  pivot_sample(sample) %>%
+  ggplot(aes(PC1, PC2, label = sample)) +
   geom_point(color = "red") +
   ggrepel::geom_text_repel(size = 3) +
   custom_theme
@@ -579,115 +677,6 @@ BRCA_cell_type_long %>%
 
 ## Supplementary
 Some things we don't have time to cover in Part 1 of this workshop can be found in the [Supplementary material](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/supplementary.html).
-
-# Part 2 Bulk RNA-seq with tidySummarizedExperiment and Bioconductor
-
-## Tidify `SummarizedExperiment` into `tidySummarizedExperiment`
-
-This is a SummarizedExperiment object but it is evaluated as tibble. So it is fully compatible both with SummarizedExperiment and tidyverse APIs. 
-
-```{r}
-library(tidySummarizedExperiment)
-pasilla_tidy <- airway %>% tidy()
-```
-
-**It looks like a tibble**
-
-```{r}
-pasilla_tidy
-```
-
-**But it is a SummarizedExperiment object after all**
-
-```{r}
-assays(pasilla_tidy)
-```
-
-## Tidyverse commands
-
-We can use tidyverse commands to explore the tidy SummarizedExperiment object.
-
-We can use `slice` to choose rows by position, for example to choose the first row.
-
-```{r}
-pasilla_tidy %>% slice(1)
-```
-
-We can use `filter` to choose rows by criteria.
-
-```{r}
-pasilla_tidy %>% filter(dex == "untrt")
-```
-
-We can use `select` to choose columns.
-
-```{r}
-pasilla_tidy %>% select(sample)
-```
-
-We can use `count` to count how many rows we have for each sample.
-
-```{r}
-pasilla_tidy %>% count(sample)
-```
-
-We can use `distinct` to see what distinct sample information we have.
-
-```{r}
-pasilla_tidy %>% distinct(sample, dex, cell)
-```
-
-We could use `rename` to rename a column. For example, to modify the type column name.
-
-```{r}
-pasilla_tidy %>% rename(treatment_status=dex)
-```
-
-We could use `mutate` to create a column. For example, we could create a new type column that contains single
-and paired instead of single_end and paired_end.
-
-```{r}
-pasilla_tidy %>% mutate(type=str_remove(sample, "SRR1039"))
-```
-
-We could use `unite` to combine multiple columns into a single column.
-
-```{r}
-pasilla_tidy %>% unite("combined", c(dex, cell))
-```
-
-We can also combine commands with the tidyverse pipe `%>%`.
-
-For example, we could combine `group_by` and `summarise` to get the total counts for each sample.
-
-```{r}
-pasilla_tidy %>%
-    group_by(sample) %>%
-    summarise(total_counts=sum(counts))
-```
-
-We could combine `group_by`, `mutate` and `filter` to get the transcripts with mean count > 0.
-
-```{r}
-pasilla_tidy %>%
-    group_by(seqnames ) %>%
-    mutate(mean_count=mean(counts)) %>%
-    filter(mean_count > 0)
-```
-
-
-## Plotting
-
-We can treat `pasilla_tidy` as a normal tibble for plotting. Here we plot the distribution of counts per sample.
-
-```{r plot1}
-pasilla_tidy %>%
-    ggplot(aes(counts + 1, group=sample, color=`dex`)) +
-    geom_density() +
-    scale_x_log10() +
-    custom_theme
-```
-
 
 # Part 3 Single-cell RNA-seq with tidySingleCellExperiment
 
@@ -731,21 +720,16 @@ The single-cell RNA sequencing data used here is 3000 cells in total, subsetted 
 ```{r}
 pbmc <- bioc2021tidytranscriptomics::pbmc
 
-dim(pbmc)
 ```
 
-### Create `tidySingleCellExperiment`
+### `tidySingleCellExperiment`
 
 This is a SingleCellExperiment object but it is evaluated as tibble. So it is fully compatible both with SingleCellExperiment and tidyverse APIs.
-
-```{r}
-pbmc_tidy <- pbmc %>% tidy()
-```
 
 **It looks like a tibble**
 
 ```{r}
-pbmc_tidy
+pbmc
 ```
 
 **But it is a SingleCellExperiment object after all**
@@ -753,7 +737,7 @@ pbmc_tidy
 So it can be interacted with using [SingleCellExperiment commands](https://bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) such as `assayNames`.
 
 ```{r}
-assayNames(pbmc_tidy) # from SummarizedExperiment
+assayNames(pbmc) # from SummarizedExperiment
 ```
 
 ## Extract gene information
@@ -761,8 +745,7 @@ assayNames(pbmc_tidy) # from SummarizedExperiment
 We can join transcript-wise information for independent analyses
 
 ```{r}
-pbmc_tidy %>%
-  join_transcripts("CD3G")
+pbmc %>%  join_transcripts("CD3G")
 
 ```
 
@@ -771,8 +754,8 @@ pbmc_tidy %>%
 We can also interact with our object as we do with any tidyverse tibble. In this case we want to polish an annotation column. We will extract the sample and dataset names from the file name column into separate columns.
 
 ```{r}
-pbmc_tidy <-
-  pbmc_tidy %>%
+pbmc <-
+  pbmc %>%
 
   # Extract sample and group
   extract(file, "sample", "../data/([a-zA-Z0-9_]+)/outs.+", remove = FALSE) %>%
@@ -780,7 +763,7 @@ pbmc_tidy <-
   # Extract data source
   extract(file, c("dataset", "groups"), "../data/([a-zA-Z0-9_]+)_([0-9])/outs.+")
 
-pbmc_tidy
+pbmc
 ```
 
 ## Quality control
@@ -830,13 +813,13 @@ my_tibble_nested %>%
 # Get chromosomal location for gene symbols
 location <- mapIds(
   EnsDb.Hsapiens.v86,
-  keys = rownames(pbmc_tidy),
+  keys = rownames(pbmc),
   column = "SEQNAME",
   keytype = "SYMBOL"
 )
 
-pbmc_tidy <-
-  pbmc_tidy %>%
+pbmc <-
+  pbmc %>%
 
   # Grouping - nesting by dataset
   nest(data = -dataset) %>%
@@ -866,7 +849,7 @@ pbmc_tidy <-
 We can use tidyverse to reshape the data and create beeswarm plots to visualise the mitochondrial content. 
 
 ```{r, warning=FALSE}
-pbmc_tidy %>%
+pbmc %>%
 
   # Reshaping
   pivot_longer(c(detected, sum, subsets_Mito_percent)) %>%
@@ -893,7 +876,7 @@ In the faceted plot, detected is number of genes in each of the 10 datasets, sum
 We filter out cells with high mitochondrial content.
 
 ```{r}
-pbmc_tidy <- pbmc_tidy %>% filter(!high_mitochondrion)
+pbmc <- pbmc %>% filter(!high_mitochondrion)
 ```
 
 ## Scaling and Integrating
@@ -902,8 +885,8 @@ We need to integrate the different datasets to adjust for technical variability 
 
 ```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE}
 # Scaling within each dataset
-pbmc_tidy <-
-  pbmc_tidy %>%
+pbmc <-
+  pbmc %>%
 
   # Define batch
   mutate(batch = dataset) %>%
@@ -914,8 +897,7 @@ pbmc_tidy <-
 
   # Integration
   pull(data) %>%
-  fastMNN() %>%
-  tidy()
+  fastMNN() 
 ```
 
 ## Identify clusters 
@@ -925,22 +907,21 @@ We proceed with cluster identification with scran FindNeighbors constructs a Sha
 ```{r cluster}
 # Assign clusters to the 'colLabels'
 # of the SingleCellExperiment object
-colLabels(pbmc_tidy) <- # from SingleCellExperiment
-  pbmc_tidy %>%
+colLabels(pbmc) <- # from SingleCellExperiment
+  pbmc %>%
   buildSNNGraph(use.dimred="corrected") %>% # from scran - shared nearest neighbour
   cluster_walktrap() %$% # from igraph
   membership %>%
   as.factor()
 
 # Reorder columns
-pbmc_tidy %>% select(label, everything())
+pbmc %>% select(label, everything())
 ```
 
 Now we can interrogate the object as if it was a regular tibble data frame.
 
 ```{r cluster count SingleCellExperiment}
-pbmc_tidy %>%
-  count(label)
+pbmc %>% count(label)
 ```
 
 ## Reduce dimensions
@@ -949,15 +930,15 @@ Besides PCA which is a linear dimensionality reduction, we can apply neighbour a
 
 ```{r umap SingleCellExperiment, warning=FALSE}
 # Calculate UMAP with scater
-pbmc_tidy <-
-  pbmc_tidy %>%
+pbmc <-
+  pbmc %>%
   runUMAP(ncomponents = 3, dimred="corrected") # from scater
 ```
 
 And we can plot the clusters as a 3D plot using plotly. This time we are colouring by estimated cluster labels to visually check the cluster labels.
 
 ```{r umap plot 2, eval=FALSE}
-pbmc_tidy %>%
+pbmc %>%
   plot_ly(
     x = ~`UMAP1`,
     y = ~`UMAP2`,
@@ -981,17 +962,17 @@ We can identify cluster markers (genes) using scran As example, we are selecting
 ```{r}
 # Identify top 10 markers per cluster
 marker_genes <-
-    pbmc_tidy %>%
-    findMarkers(groups=pbmc_tidy$label, assay.type = "reconstructed") %>%  # scran
+    pbmc %>%
+    findMarkers(groups=pbmc$label, assay.type = "reconstructed") %>%  # scran
     as.list() %>%
     map(~ head(.x, 10) %>%  rownames()) %>%
     unlist()
 
 # Plot heatmap
-pbmc_tidy %>%
+pbmc %>%
   plotHeatmap(                                  # from scater
     features=marker_genes, 
-    columns=order(pbmc_tidy$label), 
+    columns=order(pbmc$label), 
     colour_columns_by=c("label"), 
     exprs_values  = "reconstructed"
   ) 
@@ -1009,13 +990,13 @@ blueprint <- BlueprintEncodeData()
 cell_type <-
     
   # extracting counts from SingleCellExperiment object
-  assays(pbmc_tidy)$reconstructed%>%
+  assays(pbmc)$reconstructed %>%
 
     # SingleR
   SingleR(
     ref = blueprint,
     labels = blueprint$label.main,
-    clusters = pbmc_tidy %>% pull(label)
+    clusters = pbmc %>% pull(label)
   ) %>%
     
   # Formatting results
@@ -1030,18 +1011,18 @@ We join the cluster label dataframe to our tidySingleCellExperiment tibble.
 
 ```{r}
 # Join cell type info
-pbmc_tidy <-
-  pbmc_tidy %>%
+pbmc <-
+  pbmc %>%
   left_join(cell_type, by = "label")
 
 # Reorder columns
-pbmc_tidy %>% select(cell, first.labels, everything())
+pbmc %>% select(cell, first.labels, everything())
 ```
 
 We can easily summarise the results. For example, we can see how cell type classification overlaps with cluster classification.
 
 ```{r}
-pbmc_tidy %>% count(label, first.labels)
+pbmc %>% count(label, first.labels)
 ```
 ## Pseudobulk analyses
 
@@ -1057,7 +1038,7 @@ devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
 
 # Aggregate
 pbmc_bulk = 
-  tidy(pbmc) %>% 
+  bioc2021tidytranscriptomics::pbmc %>% 
   aggregate_cells(file) 
 
 pbmc_bulk
@@ -1068,7 +1049,6 @@ pbmc_bulk
 pbmc_bulk %>%
   
   # Tidybulk operations
-  tidybulk(file, transcript, abundance_counts) %>%
   tidybulk::identify_abundant() %>%
   tidybulk::scale_abundance()
 ```
