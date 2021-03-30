@@ -64,6 +64,10 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown
+Remotes:
+    stemangiola/tidybulk
+    stemangiola/tidySummarizedExperiment
+    stemangiola/tidySingleCellExperiment
 Biarch: true
 biocViews: RNASeq, DifferentialExpression, GeneExpression, Normalization, Clustering, QualityControl, Sequencing, SingleCell, Transcription, Transcriptomics
 URL: https://stemangiola.github.io/bioc2021_tidytranscriptomics/
