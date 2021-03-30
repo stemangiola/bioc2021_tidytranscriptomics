@@ -146,7 +146,7 @@ We can use tidyverse commands to explore the tidy SummarizedExperiment object.
 We can use `slice` to choose rows by position, for example to choose the first row.
 
 ```{r}
-airway %>% slice(1)
+#airway %>% slice(1)
 ```
 
 We can use `filter` to choose rows by criteria.
@@ -183,13 +183,13 @@ We could use `mutate` to create a column. For example, we could create a new typ
 and paired instead of single_end and paired_end.
 
 ```{r}
-airway %>% mutate(type=str_remove(sample, "SRR1039"))
+#airway %>% mutate(type=str_remove(sample, "SRR1039"))
 ```
 
 We could use `unite` to combine multiple columns into a single column.
 
 ```{r}
-airway %>% unite("combined", c(dex, cell))
+#airway %>% unite("combined", c(dex, cell))
 ```
 
 We can also combine commands with the tidyverse pipe `%>%`.
@@ -206,7 +206,7 @@ We could combine `group_by`, `mutate` and `filter` to get the transcripts with m
 
 ```{r}
 airway %>%
-    group_by(seqnames ) %>%
+    group_by(seqnames) %>%
     mutate(mean_count=mean(counts)) %>%
     filter(mean_count > 0)
 ```
@@ -229,14 +229,16 @@ airway %>%
 ```{r}
 # setup data workflow
 counts_tt <-
-  airway %>%
-  mutate(sample_name = str_remove(sample, "SRR1039")) %>%
-  mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
-    keys = transcript,
-    keytype = "ENSEMBL",
-    column = "SYMBOL",
-    multiVals = "first"
-  ))
+    airway %>%
+    rename(sample_name=SampleName)
+  # airway %>%
+  # mutate(sample_name = str_remove(sample, "SRR1039")) %>%
+  # mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
+  #   keys = transcript,
+  #   keytype = "ENSEMBL",
+  #   column = "SYMBOL",
+  #   multiVals = "first"
+  # ))
 # take a look
 counts_tt
 ```
@@ -552,32 +554,32 @@ A more informative plot, integrating some of the packages in tidyverse.
 We'll extract the symbols for a few top genes (by P value) to use in some of the plots we will make.
 
 ```{r}
-topgenes_symbols <-
-  counts_de %>%
-  pivot_transcript() %>%
-  arrange(PValue) %>%
-  head(6) %>%
-  pull(symbol)
+# topgenes_symbols <-
+#   counts_de %>%
+#   pivot_transcript() %>%
+#   arrange(PValue) %>%
+#   head(6) %>%
+#   pull(symbol)
 ```
 
 ```{r out.width = "70%", warning=FALSE}
-counts_de %>%
-  pivot_transcript() %>%
-
-  # Subset data
-  mutate(significant = FDR < 0.05 & abs(logFC) >= 2) %>%
-  mutate(symbol = ifelse(symbol %in% topgenes_symbols, as.character(symbol), "")) %>%
-
-  # Plot
-  ggplot(aes(x = logFC, y = PValue, label = symbol)) +
-  geom_point(aes(color = significant, size = significant, alpha = significant)) +
-  geom_text_repel() +
-
-  # Custom scales
-  custom_theme +
-  scale_y_continuous(trans = "log10_reverse") +
-  scale_color_manual(values = c("black", "#e11f28")) +
-  scale_size_discrete(range = c(0, 2))
+# counts_de %>%
+#   pivot_transcript() %>%
+# 
+#   # Subset data
+#   mutate(significant = FDR < 0.05 & abs(logFC) >= 2) %>%
+#   mutate(symbol = ifelse(symbol %in% topgenes_symbols, as.character(symbol), "")) %>%
+# 
+#   # Plot
+#   ggplot(aes(x = logFC, y = PValue, label = symbol)) +
+#   geom_point(aes(color = significant, size = significant, alpha = significant)) +
+#   geom_text_repel() +
+# 
+#   # Custom scales
+#   custom_theme +
+#   scale_y_continuous(trans = "log10_reverse") +
+#   scale_color_manual(values = c("black", "#e11f28")) +
+#   scale_size_discrete(range = c(0, 2))
 ```
 
 ## Automatic bibliography
