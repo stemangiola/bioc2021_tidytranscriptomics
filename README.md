@@ -44,7 +44,7 @@ Alternatively, you could install the workshop using the commands below in R `4.0
 ```
 #install.packages('remotes')
 
-# Need to set this to prevent installation erroring due to even tiny warnings, similar to [here](https://github.com/r-lib/remotes/issues/403#issuecomment-748181946)
+# Need to set this to prevent installation erroring due to even tiny warnings, similar to here: https://github.com/r-lib/remotes/issues/403#issuecomment-748181946
 Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
 
 # Install workshop package
