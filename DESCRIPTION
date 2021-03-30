@@ -65,8 +65,8 @@ Suggests:
     rmarkdown,
     pkgdown
 Remotes:
-    stemangiola/tidybulk
-    stemangiola/tidySummarizedExperiment
+    stemangiola/tidybulk,
+    stemangiola/tidySummarizedExperiment,
     stemangiola/tidySingleCellExperiment
 Biarch: true
 biocViews: RNASeq, DifferentialExpression, GeneExpression, Normalization, Clustering, QualityControl, Sequencing, SingleCell, Transcription, Transcriptomics
