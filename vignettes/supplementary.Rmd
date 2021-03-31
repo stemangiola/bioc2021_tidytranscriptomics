@@ -145,14 +145,14 @@ counts_scaled %>%
 ## How to create MDS plot
 
 ```{r out.width = "70%"}
-airway %>%
-  tidybulk() %>%
-  keep_abundant(factor_of_interest = dex) %>%
-  scale_abundance() %>%
-  reduce_dimensions(method = "MDS", scale = FALSE) %>%
-  pivot_sample() %>%
-  ggplot(aes(Dim1, Dim2, color = dex)) +
-  geom_point()
+# airway %>%
+#   tidybulk() %>%
+#   keep_abundant(factor_of_interest = dex) %>%
+#   scale_abundance() %>%
+#   reduce_dimensions(method = "MDS", scale = FALSE) %>%
+#   pivot_sample() %>%
+#   ggplot(aes(Dim1, Dim2, color = dex)) +
+#   geom_point()
 ```
 
 
