@@ -235,7 +235,7 @@ airway %>%
 
 ```{r}
 # setup data workflow
-counts_tt <-
+counts <-
     airway %>%
     rename(sample_name=SampleName)
   # airway %>%
@@ -247,7 +247,7 @@ counts_tt <-
   #   multiVals = "first"
   # ))
 # take a look
-counts_tt
+counts
 ```
 
 From this tidybulk tibble, we can perform differential expression analysis with the tidybulk package.
@@ -259,7 +259,7 @@ We can perform the filtering using tidybulk `keep_abundant` or `identify_abundan
 
 ```{r}
 # Filtering counts
-counts_filtered <- counts_tt %>% keep_abundant(factor_of_interest = dex)
+counts_filtered <- counts %>% keep_abundant(factor_of_interest = dex)
 
 # take a look
 counts_filtered
