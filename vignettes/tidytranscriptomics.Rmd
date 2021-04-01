@@ -236,16 +236,14 @@ airway %>%
 ```{r}
 # setup data workflow
 counts <-
-    airway %>%
-    rename(sample_name=SampleName)
-  # airway %>%
-  # mutate(sample_name = str_remove(sample, "SRR1039")) %>%
-  # mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
-  #   keys = transcript,
-  #   keytype = "ENSEMBL",
-  #   column = "SYMBOL",
-  #   multiVals = "first"
-  # ))
+  airway %>%
+  mutate(sample_name = str_remove(sample, "SRR1039")) %>%
+  mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
+    keys = transcript,
+    keytype = "ENSEMBL",
+    column = "SYMBOL",
+    multiVals = "first"
+  ))
 # take a look
 counts
 ```
@@ -561,32 +559,32 @@ A more informative plot, integrating some of the packages in tidyverse.
 We'll extract the symbols for a few top genes (by P value) to use in some of the plots we will make.
 
 ```{r}
-# topgenes_symbols <-
-#   counts_de %>%
-#   pivot_transcript() %>%
-#   arrange(PValue) %>%
-#   head(6) %>%
-#   pull(symbol)
+topgenes_symbols <-
+  counts_de %>%
+  pivot_transcript() %>%
+  arrange(PValue) %>%
+  head(6) %>%
+  pull(symbol)
 ```
 
 ```{r out.width = "70%", warning=FALSE}
-# counts_de %>%
-#   pivot_transcript() %>%
-# 
-#   # Subset data
-#   mutate(significant = FDR < 0.05 & abs(logFC) >= 2) %>%
-#   mutate(symbol = ifelse(symbol %in% topgenes_symbols, as.character(symbol), "")) %>%
-# 
-#   # Plot
-#   ggplot(aes(x = logFC, y = PValue, label = symbol)) +
-#   geom_point(aes(color = significant, size = significant, alpha = significant)) +
-#   geom_text_repel() +
-# 
-#   # Custom scales
-#   custom_theme +
-#   scale_y_continuous(trans = "log10_reverse") +
-#   scale_color_manual(values = c("black", "#e11f28")) +
-#   scale_size_discrete(range = c(0, 2))
+counts_de %>%
+  pivot_transcript() %>%
+
+  # Subset data
+  mutate(significant = FDR < 0.05 & abs(logFC) >= 2) %>%
+  mutate(symbol = ifelse(symbol %in% topgenes_symbols, as.character(symbol), "")) %>%
+
+  # Plot
+  ggplot(aes(x = logFC, y = PValue, label = symbol)) +
+  geom_point(aes(color = significant, size = significant, alpha = significant)) +
+  geom_text_repel() +
+
+  # Custom scales
+  custom_theme +
+  scale_y_continuous(trans = "log10_reverse") +
+  scale_color_manual(values = c("black", "#e11f28")) +
+  scale_size_discrete(range = c(0, 2))
 ```
 
 ## Automatic bibliography
@@ -687,7 +685,7 @@ BRCA_cell_type_long %>%
 ## Supplementary
 Some things we don't have time to cover in Part 1 of this workshop can be found in the [Supplementary material](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/supplementary.html).
 
-# Part 3 Single-cell RNA-seq with tidySingleCellExperiment
+# Part 2 Single-cell RNA-seq with tidySingleCellExperiment
 
 [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1)
 
