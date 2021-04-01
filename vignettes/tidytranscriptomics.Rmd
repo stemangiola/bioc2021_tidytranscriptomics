@@ -151,7 +151,7 @@ We can use tidyverse commands to explore the tidy SummarizedExperiment object.
 We can use `slice` to choose rows by position, for example to choose the first row.
 
 ```{r}
-#airway %>% slice(1)
+airway %>% slice(1)
 ```
 
 We can use `filter` to choose rows by criteria.
@@ -188,13 +188,15 @@ We could use `mutate` to create a column. For example, we could create a new typ
 and paired instead of single_end and paired_end.
 
 ```{r}
-#airway %>% mutate(type=str_remove(sample, "SRR1039"))
+airway %>%
+  mutate(type=str_remove(sample, "SRR1039")) %>%
+  select(type, sample, transcript, counts)
 ```
 
 We could use `unite` to combine multiple columns into a single column.
 
 ```{r}
-#airway %>% unite("combined", c(dex, cell))
+airway %>% unite("combined", c(dex, cell))
 ```
 
 We can also combine commands with the tidyverse pipe `%>%`.
@@ -211,7 +213,7 @@ We could combine `group_by`, `mutate` and `filter` to get the transcripts with m
 
 ```{r}
 airway %>%
-    group_by(seqnames) %>%
+    group_by(transcript) %>%
     mutate(mean_count=mean(counts)) %>%
     filter(mean_count > 0)
 ```
