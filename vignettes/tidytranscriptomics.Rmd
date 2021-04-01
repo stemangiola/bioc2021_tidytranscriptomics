@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 Background information and setup instructions for this workshop can be found [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html).
 
 
-```{r, echo=FALSE, out.width = "100px"}
+```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
