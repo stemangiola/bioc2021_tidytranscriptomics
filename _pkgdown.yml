@@ -20,8 +20,6 @@ navbar:
       href: articles/background.html
     - text: Workshop
       href: articles/tidytranscriptomics.html
-    - text: Solutions 
-      href: articles/solutions.html
 
   right:
    - icon: fab fa-github
