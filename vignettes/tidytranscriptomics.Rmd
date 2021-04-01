@@ -19,28 +19,29 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
+# Workshop introduction
 
 Background information and setup instructions for this workshop can be found [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html). 
 
-This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. This can be achieved for RNA sequencing data with the [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) packages. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis.
+This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. This can be achieved for RNA sequencing data with the [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) packages. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
-# Part 1 Bulk RNA-seq with tidybulk
-
-
-### Acknowledgements
-Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). Use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
+# Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 ```
 
+### Acknowledgements
+
+Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). Use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
+
 ## Introduction
+
 Measuring gene expression on a genome-wide scale has become common practice over the last two decades or so, with microarrays predominantly used pre-2008. With the advent of next generation sequencing technology in 2008, an increasing number of scientists use this technology to measure and understand changes in gene expression in often complex systems. As sequencing costs have decreased, using RNA sequencing to simultaneously measure the expression of tens of thousands of genes for multiple samples has never been easier. The cost of these experiments has now moved from generating the data to storing and analysing it.
 
 There are many steps involved in analysing an RNA sequencing dataset. Sequenced reads are aligned to a reference genome, then the number of reads mapped to each gene can be counted. This results in a table of counts, which is what we perform statistical analyses on in R. While mapping and counting are important and necessary tasks, today we will be starting from the count data and showing how differential expression analysis can be performed in a friendly way using the Bioconductor package, tidybulk.
@@ -101,9 +102,9 @@ custom_theme <-
   )
 ```
 
-### Setting up the data
+### tidySummarizedExperiment
 
-Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
+Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. The data in the airway package is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information on these objects see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment).
 
 ```{r}
 # load airway RNA sequencing data
@@ -113,15 +114,11 @@ data(airway)
 airway
 ```
 
-The airway data is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information on these objects see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment).
+The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SummarizedExperiment* behaviour.
 
-## tidySummarizedExperiment
+If we load the *tidySummarizedExperiment* package and then view the airway data it now displays as a tibble. A tibble is the tidyverse table format.
 
-The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated with tidy principles, without affecting any *SummarizedExperiment* behaviour.
-
-If we load *tidySummarizedExperiment* and then view the airway data, it now displays as a tibble. A tibble is the tidyverse table format.
-
-```{r}
+```{r message=FALSE, warning=FALSE}
 # load tidySummarizedExperiment package
 library(tidySummarizedExperiment)
 
@@ -129,31 +126,31 @@ library(tidySummarizedExperiment)
 airway
 ```
 
-Now we can more easily see the data. The counts_airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.  
+Now we can more easily see the data. The airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.  
 
-Note that we can also interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.
+We can still interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.
 
 ```{r}
 assays(airway)
 ```
 
-## Tidyverse commands
+### Tidyverse commands
 
-We can use tidyverse commands, such as `filter`, `select`, `mutate`, `group_by` and `summarise`, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
+And now we can also use tidyverse commands, such as `filter`, `select`, `mutate`, `group_by` and `summarise`, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
 
-We can use `filter` to choose rows by criteria.
+We can use `filter` to choose rows, for example, to see just the rows for the untreated samples.
 
 ```{r}
 airway %>% filter(dex == "untrt")
 ```
 
-We can use `select` to choose columns.
+We can use `select` to choose columns, for example, to see the sample, cell line and treatment columns.
 
 ```{r}
 airway %>% select(sample, cell, dex)
 ```
 
-We can use `group_by` and `summarise` to get the total counts for each sample.
+We can use `group_by` and `summarise` to summarise information, for example to get the total counts for each sample.
 
 ```{r}
 airway %>%
@@ -171,7 +168,7 @@ airway %>%
 
 ## Setting up the data
 
-We'll use mutate to set up the data for our RNA-seq analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
+We'll set up the airway data for our RNA-seq analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
 # setup data workflow
@@ -189,6 +186,7 @@ counts
 ```
 
 ## Filtering lowly transcribed genes  
+
 Genes with very low counts across all libraries provide little evidence for differential expression and they can interfere with some of the statistical approximations that are used later in the pipeline. They also add to the multiple testing burden when estimating false discovery rates, reducing power to detect differentially expressed genes. These genes should be filtered out prior to further analysis.
 
 We can perform the filtering using tidybulk `keep_abundant` or `identify_abundant`. These functions can use the *edgeR* `filterByExpr` function described in [@law2016rna] to automatically identify the genes with adequate abundance for differential expression testing. By default, this will keep genes with ~10 counts in a minimum number of samples, the number of the samples in the smallest group. In this dataset the smallest group size is four (as we have four dex-treated samples versus four untreated). Alternatively, we could use `identify_abundant` to identify which genes are abundant or not (TRUE/FALSE), rather than just keeping the abundant ones. 
@@ -475,10 +473,7 @@ fit <- glmQLFit(dgList, design)
 qlf <- glmQLFTest(fit, coef=2)
 ```
 
-
-## Plots after testing for differentially expressed
-
-### Volcano plots
+## Volcano plots
 
 Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes (e.g. genes with false-discovery rate < 0.05)
 
@@ -587,15 +582,11 @@ BRCA_cell_type_long %>%
 
 ## Key Points
 
-- RNA sequencing data can be represented and analysed in a 'tidy' way using tidybulk and the tidyverse
-- With the modularity offered by piping we don't need to create variables, unless an object is used more than one. This improves robustness of the code.
-- The principles of tidy transcriptomics are to interface as much as possible with commonly known manipulation and visualisation tools, rather than creating custom functions.
-- Some of the key steps in an RNA sequencing analysis are (i) filtering lowly abundant transcripts, (ii) adjusting for differences in sequencing depth and composition, (iii) testing for differential expression
-- Dimensionality reduction (PCA or MDS) plots are very important for exploring the data
-- Density plots, volcano plots, strip-charts and heatmaps are useful visualisation tools for evaluating the hypothesis testing.
+- Bulk RNA sequencing data can be represented and analysed in a 'tidy' way using tidySummarizedExperiment, tidybulk and the tidyverse.
+- tidySummarizedExperiment enables us to visualise and manipulate a Bioconductor SummarizedExperiment object as if it were in tidy data format.
+- Some of the key steps in an RNA sequencing analysis are filtering lowly abundant transcripts, adjusting for differences in sequencing depth and composition, testing for differential expression, and visualising the data, which can all be performed in a tidy way with tidybulk.
 - `tidybulk` allows streamlined multi-method analyses
 - `tidybulk` allow easy analyses of cell type composition
-- Testing for differences in tissue composition between samples is analogous to the testing for differences in transcript abundance 
 
 ## Supplementary
 Some things we don't have time to cover in Part 1 of this workshop can be found in the [Supplementary material](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/supplementary.html).
@@ -979,8 +970,7 @@ pbmc_bulk %>%
 - Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell type classification
 - `tidySingleCellExperiment` is an invisible layer that operates on a `SingleCellExperiment` object and enables us to visualise and manipulate data as if it were a tidy data frame.
 - `tidySingleCellExperiment` object is a `SingleCellExperiment object` so it can be used with any `SingleCellExperiment` compatible method
-- `tidySingleCellExperiment` is an invisible layer that operates on a `SingleCellExperiment` object and enables us to visualise and manipulate data as if it were a tidy data frame.
-- `tidySingleCellExperiment` object is a `SingleCellExperiment object` so it can be used with any `SingleCellExperiment` compatible method
+
 
 # Contributing
 If you want to suggest improvements for this workshop or ask questions, you can do so as described [here](https://github.com/stemangiola/bioc2021_tidytranscriptomics/blob/master/CONTRIBUTING.md).
