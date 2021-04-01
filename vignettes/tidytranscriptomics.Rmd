@@ -19,21 +19,18 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Background
+# Introduction
 
-Background information and setup instructions for this workshop can be found [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html).
+Background information and setup instructions for this workshop can be found [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html). 
+
+This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. This can be achieved for RNA sequencing data with the [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) packages. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis.
 
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
-
 # Part 1 Bulk RNA-seq with tidybulk
-
-This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions.
-
-This can be achieved for RNA sequencing data with the [tidybulk](https://stemangiola.github.io/tidybulk/), [tidyHeatmap](https://stemangiola.github.io/tidyHeatmap) [@mangiola2020tidyheatmap] and [tidyverse](https://www.tidyverse.org/) [@wickham2019welcome] packages. The tidybulk package provides a tidy data structure and a modular framework for bulk transcriptional analyses. tidyHeatmap provides a tidy implementation of ComplexHeatmap. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis
 
 
 ### Acknowledgements
@@ -43,7 +40,6 @@ Some of the material in Part 1 was adapted from an R for RNA sequencing workshop
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 ```
 
-
 ## Introduction
 Measuring gene expression on a genome-wide scale has become common practice over the last two decades or so, with microarrays predominantly used pre-2008. With the advent of next generation sequencing technology in 2008, an increasing number of scientists use this technology to measure and understand changes in gene expression in often complex systems. As sequencing costs have decreased, using RNA sequencing to simultaneously measure the expression of tens of thousands of genes for multiple samples has never been easier. The cost of these experiments has now moved from generating the data to storing and analysing it.
 
@@ -52,7 +48,7 @@ There are many steps involved in analysing an RNA sequencing dataset. Sequenced 
 
 First, let’s load all the packages we will need to analyse the data. 
 
-_Note: you should load the *tidybulk* library after the tidyverse core packages for best integration._
+_Note: you should load the *tidybulk* and *tidySummarizedExperiment* libraries after the tidyverse core packages for best integration._
 
 ```{r message=FALSE, warning=FALSE}
 # load libraries
@@ -75,7 +71,7 @@ library(ggrepel)
 library(GGally)
 library(tidyHeatmap)
 library(tidybulk)
-library(tidySummarizedExperiment)
+# library(tidySummarizedExperiment) # we'll load this below to show what it can do
 ```
 
 Plot settings. Set the colours and theme we will use for our plots.
@@ -109,36 +105,33 @@ custom_theme <-
 
 Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
 
-The airway data is stored as a Bioconductor *RangedSummarizedExperiment* object. We will convert this object into a tidybulk tibble. A tibble is the tidyverse table format.
-
-In this workshop we will be using the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps (as we'll see later). It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
-
 ```{r}
 # load airway RNA sequencing data
 data(airway)
 
-```
-
-
-The `airway` object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.
-We can shorten the sample names. We can remove the SRR1039 prefix that's present in all of them, as shorter names can fit better in some of the plots we will create. We can use `mutate()` together with `str_replace()` to remove the SRR1039 string from the sample column.
-We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db` and add them as a column using `mutate` again.
-With tidyverse, all above steps can be linked with the `%>%`, as shown below. This has the benefits that
-* no temporary variables need to be created
-* less typing is required
-* the steps can be seen more clearly.
-
-## tidySummarizedExperiment
-
-`tidySummarizedExperiment` allows `SummarizedExperiment` object to be displayed and manipulated with tidy principles, without affecting any `SummarizedExperiment` behaviour.
-
-**It looks like a tibble**
-
-```{r}
+# take a look
 airway
 ```
 
-**But it is a SummarizedExperiment object after all**
+The airway data is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information on these objects see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment).
+
+## tidySummarizedExperiment
+
+The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated with tidy principles, without affecting any *SummarizedExperiment* behaviour.
+
+If we load *tidySummarizedExperiment* and then view the airway data, it now displays as a tibble. A tibble is the tidyverse table format.
+
+```{r}
+# load tidySummarizedExperiment package
+library(tidySummarizedExperiment)
+
+# take a look
+airway
+```
+
+Now we can more easily see the data. The counts_airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.  
+
+Note that we can also interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.
 
 ```{r}
 assays(airway)
@@ -146,13 +139,7 @@ assays(airway)
 
 ## Tidyverse commands
 
-We can use tidyverse commands to explore the tidy SummarizedExperiment object.
-
-We can use `slice` to choose rows by position, for example to choose the first row.
-
-```{r}
-airway %>% slice(1)
-```
+We can use tidyverse commands, such as `filter`, `select`, `mutate`, `group_by` and `summarise`, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
 
 We can use `filter` to choose rows by criteria.
 
@@ -163,75 +150,28 @@ airway %>% filter(dex == "untrt")
 We can use `select` to choose columns.
 
 ```{r}
-airway %>% select(sample)
+airway %>% select(sample, cell, dex)
 ```
 
-We can use `count` to count how many rows we have for each sample.
-
-```{r}
-airway %>% count(sample)
-```
-
-We can use `distinct` to see what distinct sample information we have.
-
-```{r}
-airway %>% distinct(sample, dex, cell)
-```
-
-We could use `rename` to rename a column. For example, to modify the type column name.
-
-```{r}
-airway %>% rename(treatment_status=dex)
-```
-
-We could use `mutate` to create a column. For example, we could create a new type column that contains single
-and paired instead of single_end and paired_end.
+We can use `group_by` and `summarise` to get the total counts for each sample.
 
 ```{r}
 airway %>%
-  mutate(type=str_remove(sample, "SRR1039")) %>%
-  select(type, sample, transcript, counts)
-```
-
-We could use `unite` to combine multiple columns into a single column.
-
-```{r}
-airway %>% unite("combined", c(dex, cell))
-```
-
-We can also combine commands with the tidyverse pipe `%>%`.
-
-For example, we could combine `group_by` and `summarise` to get the total counts for each sample.
-
-```{r}
-airway %>%
-    group_by(sample) %>%
+    group_by(sample, cell, dex) %>%
     summarise(total_counts=sum(counts))
 ```
-
-We could combine `group_by`, `mutate` and `filter` to get the transcripts with mean count > 0.
+We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
 
 ```{r}
 airway %>%
-    group_by(transcript) %>%
-    mutate(mean_count=mean(counts)) %>%
-    filter(mean_count > 0)
+  mutate(sample_name=str_remove(sample, "SRR1039")) %>%
+  # select columns to view    
+  select(sample, sample_name)
 ```
 
+## Setting up the data
 
-## Plotting
-
-We can treat `airway` as a normal tibble for plotting. Here we plot the distribution of counts per sample.
-
-```{r plot1}
-airway %>%
-    ggplot(aes(counts + 1, group=sample, color=`dex`)) +
-    geom_density() +
-    scale_x_log10() +
-    custom_theme
-```
-
-
+We'll use mutate to set up the data for our RNA-seq analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
 # setup data workflow
@@ -247,8 +187,6 @@ counts <-
 # take a look
 counts
 ```
-
-From this tidybulk tibble, we can perform differential expression analysis with the tidybulk package.
 
 ## Filtering lowly transcribed genes  
 Genes with very low counts across all libraries provide little evidence for differential expression and they can interfere with some of the statistical approximations that are used later in the pipeline. They also add to the multiple testing burden when estimating false discovery rates, reducing power to detect differentially expressed genes. These genes should be filtered out prior to further analysis.
@@ -646,29 +584,6 @@ BRCA_cell_type_long %>%
   custom_theme
 ```
 
-We can visualise the similarity of the tissue composition for the patients by performing a dimensionality reduction on cell type and proportion (rather than on transcript and counts as we did previously).
-
-```{r warning=FALSE}
-BRCA_cell_type_long %>%
-
-  # Filter cell types with proportion zero in all patients
-  nest(data = -cell_type) %>%
-  filter(map_dbl(data, ~ sum(.x$proportion)) > 0) %>%
-  unnest(data) %>%
-  
-  # Reduce dimensions
-  reduce_dimensions(
-    sample,
-    cell_type,
-    proportion,
-    method = "PCA"
-  ) %>%
-  pivot_sample(sample) %>%
-  ggplot(aes(PC1, PC2, label = sample)) +
-  geom_point(color = "red") +
-  ggrepel::geom_text_repel(size = 3) +
-  custom_theme
-```
 
 ## Key Points
 
