@@ -20,12 +20,10 @@ navbar:
       href: articles/background.html
     - text: Workshop
       href: articles/tidytranscriptomics.html
-    - text: Solutions 
-      href: articles/solutions.html
 
   right:
-   - icon: fa-github
+   - icon: fab fa-github
      href: https://github.com/stemangiola/bioc2021_tidytranscriptomics
-   - icon: fa-docker
+   - icon: fab fa-docker
      href: https://hub.docker.com/repository/docker/stemangiola/bioc2021_tidytranscriptomics
     

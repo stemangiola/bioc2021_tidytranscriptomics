@@ -17,15 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{css, echo = FALSE}
-# Formatting for polls
-.poll {
-background-color: #fff4d4;
-}
-.poll code {
-	background-color: #fff4d4;
-}
-```
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
@@ -36,26 +27,9 @@ knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 Schedule can be found [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/index.html#time-outline).  
 <br>
 **Format**: Hands on demos plus Q&A 
-**Interact**: Zoom chat and polls
+**Interact**: Zoom chat
 <br>
 <br>
-
-```{poll_1 class.source="poll"}
-Poll: Will you code along and/or try out exercises during this workshop?
-```
-
-
-```{poll_2 class.source="poll"}
-Poll: Do you have experience with transcriptomic analyses?
-```
-
-```{poll_3 class.source="poll"}
-Poll: Do you have experience with tidyverse?
-```
-
-```{poll_3 class.source="poll"}
-Poll: What are you more interested in learning in this workshop?
-```
 
 
 # What is transcriptomics?
@@ -123,22 +97,5 @@ knitr::include_graphics("../inst/vignettes/single_cell_RNAseq_pipeline.png")
 
 # Getting started 
 
-## Cloud
-
-Easiest way to run this material. Only available during workshop.
-
- * Go to http://app.orchestra.cancerdatasci.org/1  
- * Launch the workshop **Tidy transcriptomics for bulk and single-cell analyses** shown below. It may take a minute to launch.  
- * Login in with the Username and Password shown.
- 
-```{r, echo=FALSE, out.width = "600px"}
-knitr::include_graphics("../inst/vignettes/launch_workshop.png")
-```
-
- * Open `tidytranscriptomics.Rmd` in `vignettes` folder
- 
-
-## Local
-
-If you want to install on your own computer, see instructions [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/index.html#workshop-package-installation). We recommend using the Cloud during the EuroBioc2020 workshop and this method if you want to run the material after the workshop.
+If you want to follow along and run the code on your own computer, see instructions [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/index.html#workshop-package-installation). Alternatively, you can view the material at the workshop webpage [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/tidytranscriptomics.html). 
 
