@@ -49,9 +49,6 @@
 <li>
   <a href="../articles/tidytranscriptomics.html">Workshop</a>
 </li>
-<li>
-  <a href="../articles/solutions.html">Solutions</a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -93,25 +90,25 @@
 
     
     
-<div id="introduction" class="section level1">
+<div id="workshop-introduction" class="section level1">
 <h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<a href="#workshop-introduction" class="anchor"></a>Workshop introduction</h1>
 <p>Background information and setup instructions for this workshop can be found <a href="https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html">here</a>.</p>
-<p>This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm <span class="citation">(Wickham and others 2014)</span>. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. This can be achieved for RNA sequencing data with the <a href="https://stemangiola.github.io/tidybulk/">tidybulk</a>, <a href="https://stemangiola.github.io/tidySummarizedExperiment/">tidySummarizedExperiment</a> and <a href="https://stemangiola.github.io/tidySingleCellExperiment/">tidySingleCellExperiment</a> packages. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis.</p>
+<p>This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm <span class="citation">(Wickham and others 2014)</span>. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. This can be achieved for RNA sequencing data with the <a href="https://stemangiola.github.io/tidybulk/">tidybulk</a>, <a href="https://stemangiola.github.io/tidySummarizedExperiment/">tidySummarizedExperiment</a> and <a href="https://stemangiola.github.io/tidySingleCellExperiment/">tidySingleCellExperiment</a> packages. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.</p>
 <p><img src="../inst/vignettes/roadmap.png" width="600px"></p>
 </div>
-<div id="part-1-bulk-rna-seq-with-tidybulk" class="section level1">
+<div id="part-1-bulk-rna-seq-with-tidysummarizedexperiment-and-tidybulk" class="section level1">
 <h1 class="hasAnchor">
-<a href="#part-1-bulk-rna-seq-with-tidybulk" class="anchor"></a>Part 1 Bulk RNA-seq with tidybulk</h1>
+<a href="#part-1-bulk-rna-seq-with-tidysummarizedexperiment-and-tidybulk" class="anchor"></a>Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk</h1>
+<p><img src="../inst/vignettes/tidybulk_logo.png" width="100px"></p>
 <div id="acknowledgements" class="section level3">
 <h3 class="hasAnchor">
 <a href="#acknowledgements" class="anchor"></a>Acknowledgements</h3>
 <p>Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run <a href="http://combine-australia.github.io/2016-05-11-RNAseq/">here</a>. Use of the airway dataset was inspired by the <a href="http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html">DESeq2 vignette</a>.</p>
-<p><img src="../inst/vignettes/tidybulk_logo.png" width="100px"></p>
 </div>
-<div id="introduction-1" class="section level2">
+<div id="introduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#introduction-1" class="anchor"></a>Introduction</h2>
+<a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>Measuring gene expression on a genome-wide scale has become common practice over the last two decades or so, with microarrays predominantly used pre-2008. With the advent of next generation sequencing technology in 2008, an increasing number of scientists use this technology to measure and understand changes in gene expression in often complex systems. As sequencing costs have decreased, using RNA sequencing to simultaneously measure the expression of tens of thousands of genes for multiple samples has never been easier. The cost of these experiments has now moved from generating the data to storing and analysing it.</p>
 <p>There are many steps involved in analysing an RNA sequencing dataset. Sequenced reads are aligned to a reference genome, then the number of reads mapped to each gene can be counted. This results in a table of counts, which is what we perform statistical analyses on in R. While mapping and counting are important and necessary tasks, today we will be starting from the count data and showing how differential expression analysis can be performed in a friendly way using the Bioconductor package, tidybulk.</p>
 <p>First, let’s load all the packages we will need to analyse the data.</p>
@@ -162,10 +159,10 @@
         axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">30</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
       <span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div id="setting-up-the-data" class="section level3">
+<div id="tidysummarizedexperiment" class="section level3">
 <h3 class="hasAnchor">
-<a href="#setting-up-the-data" class="anchor"></a>Setting up the data</h3>
-<p>Here we will perform our analysis using the data from the <em>airway</em> package. The airway data comes from the paper by <span class="citation">(Himes et al. 2014)</span>; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.</p>
+<a href="#tidysummarizedexperiment" class="anchor"></a>tidySummarizedExperiment</h3>
+<p>Here we will perform our analysis using the data from the <em>airway</em> package. The airway data comes from the paper by <span class="citation">(Himes et al. 2014)</span>; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. The data in the airway package is a Bioconductor <em>RangedSummarizedExperiment</em> object, a type of <em>SummarizedExperiment</em> object. For more information on these objects see <a href="https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment">here</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load airway RNA sequencing data</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">airway</span><span class="op">)</span>
@@ -180,43 +177,11 @@
 <span class="co">#&gt; rowData names(0):</span>
 <span class="co">#&gt; colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521</span>
 <span class="co">#&gt; colData names(9): SampleName cell ... Sample BioSample</span></code></pre></div>
-<p>The airway data is a Bioconductor <em>RangedSummarizedExperiment</em> object, a type of <em>SummarizedExperiment</em> object. For more information on these objects see <a href="https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment">here</a>.</p>
-</div>
-</div>
-<div id="tidysummarizedexperiment" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tidysummarizedexperiment" class="anchor"></a>tidySummarizedExperiment</h2>
-<p>The <code>tidySummarizedExperiment</code> package enables any <em>SummarizedExperiment</em> object to be displayed and manipulated with tidy principles, without affecting any <em>SummarizedExperiment</em> behaviour.</p>
-<p>If we load <em>tidySummarizedExperiment</em> and then view the airway data, it now displays as a tibble. A tibble is the tidyverse table format.</p>
+<p>The <code>tidySummarizedExperiment</code> package enables any <em>SummarizedExperiment</em> object to be displayed and manipulated according to tidy data principles, without affecting any <em>SummarizedExperiment</em> behaviour.</p>
+<p>If we load the <em>tidySummarizedExperiment</em> package and then view the airway data it now displays as a tibble. A tibble is the tidyverse table format.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load tidySummarizedExperiment package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">tidySummarizedExperiment</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'tidySummarizedExperiment'</span>
-<span class="co">#&gt; The following objects are masked from 'package:tidybulk':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     bind_cols, bind_rows</span>
-<span class="co">#&gt; The following object is masked from 'package:tidyHeatmap':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     pasilla</span>
-<span class="co">#&gt; The following object is masked from 'package:plotly':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     plot_ly</span>
-<span class="co">#&gt; The following objects are masked from 'package:dplyr':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     bind_cols, bind_rows, count</span>
-<span class="co">#&gt; The following object is masked from 'package:IRanges':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     slice</span>
-<span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     rename</span>
-<span class="co">#&gt; The following object is masked from 'package:matrixStats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     count</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter</span>
 
 <span class="co"># take a look</span>
 <span class="va">airway</span>
@@ -236,18 +201,18 @@
 <span class="co">#&gt; 10 ENSG00000… SRR10…    394 GSM1275862 N613… untrt untrt SRR1…       126</span>
 <span class="co">#&gt; # … with 40 more rows, and 4 more variables: Experiment &lt;fct&gt;, Sample &lt;fct&gt;,</span>
 <span class="co">#&gt; #   BioSample &lt;fct&gt;, GenomicRanges &lt;list&gt;</span></code></pre></div>
-<p>Now we can more easily see the data. The counts_airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample-wise information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.</p>
-<p>Note that we can also interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.</p>
+<p>Now we can more easily see the data. The airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.</p>
+<p>We can still interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">assays</span><span class="op">(</span><span class="va">airway</span><span class="op">)</span>
 <span class="co">#&gt; List of length 1</span>
 <span class="co">#&gt; names(1): counts</span></code></pre></div>
 </div>
-<div id="tidyverse-commands" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tidyverse-commands" class="anchor"></a>Tidyverse commands</h2>
-<p>We can use tidyverse commands, such as <code>filter</code>, <code>select</code>, <code>mutate</code>, <code>group_by</code> and <code>summarise</code>, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website <a href="https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1">here</a>. We can also use the tidyverse pipe <code><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></code>. This ‘pipes’ the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see <a href="https://r4ds.had.co.nz/pipes.html">here</a>.</p>
-<p>We can use <code>filter</code> to choose rows by criteria.</p>
+<div id="tidyverse-commands" class="section level3">
+<h3 class="hasAnchor">
+<a href="#tidyverse-commands" class="anchor"></a>Tidyverse commands</h3>
+<p>And now we can also use tidyverse commands, such as <code>filter</code>, <code>select</code>, <code>mutate</code>, <code>group_by</code> and <code>summarise</code>, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website <a href="https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1">here</a>. We can also use the tidyverse pipe <code><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></code>. This ‘pipes’ the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see <a href="https://r4ds.had.co.nz/pipes.html">here</a>.</p>
+<p>We can use <code>filter</code> to choose rows, for example, to see just the rows for the untreated samples.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">airway</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/tidySummarizedExperiment/man/dplyr-methods.html">filter</a></span><span class="op">(</span><span class="va">dex</span> <span class="op">==</span> <span class="st">"untrt"</span><span class="op">)</span>
 <span class="co">#&gt; # A SummarizedExperiment-tibble abstraction: 256,408 x 13</span>
@@ -266,7 +231,7 @@
 <span class="co">#&gt; 10 ENSG00000… SRR10…    394 GSM1275862 N613… untrt untrt SRR1…       126</span>
 <span class="co">#&gt; # … with 40 more rows, and 4 more variables: Experiment &lt;fct&gt;, Sample &lt;fct&gt;,</span>
 <span class="co">#&gt; #   BioSample &lt;fct&gt;, GenomicRanges &lt;list&gt;</span></code></pre></div>
-<p>We can use <code>select</code> to choose columns.</p>
+<p>We can use <code>select</code> to choose columns, for example, to see the sample, cell line and treatment columns.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">airway</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/tidySummarizedExperiment/man/dplyr-methods.html">select</a></span><span class="op">(</span><span class="va">sample</span>, <span class="va">cell</span>, <span class="va">dex</span><span class="op">)</span>
 <span class="co">#&gt; tidySummarizedExperiment says: Key columns are missing. A data frame is returned for independent data analysis.</span>
@@ -284,7 +249,7 @@
 <span class="co">#&gt;  9 SRR1039508 N61311 untrt</span>
 <span class="co">#&gt; 10 SRR1039508 N61311 untrt</span>
 <span class="co">#&gt; # … with 512,806 more rows</span></code></pre></div>
-<p>We can use <code>group_by</code> and <code>summarise</code> to get the total counts for each sample.</p>
+<p>We can use <code>group_by</code> and <code>summarise</code> to summarise information, for example to get the total counts for each sample.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">airway</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://rdrr.io/pkg/tidySummarizedExperiment/man/dplyr-methods.html">group_by</a></span><span class="op">(</span><span class="va">sample</span>, <span class="va">cell</span>, <span class="va">dex</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -325,10 +290,11 @@
 <span class="co">#&gt; 10 SRR1039508 508        </span>
 <span class="co">#&gt; # … with 512,806 more rows</span></code></pre></div>
 </div>
-<div id="setting-up-the-data-1" class="section level2">
+</div>
+<div id="setting-up-the-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#setting-up-the-data-1" class="anchor"></a>Setting up the data</h2>
-<p>We’ll use mutate to set up the data for our RNA-seq analysis. We’ll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, <code>org.Hs.eg.db</code>.</p>
+<a href="#setting-up-the-data" class="anchor"></a>Setting up the data</h2>
+<p>We’ll set up the airway data for our RNA-seq analysis. We’ll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, <code>org.Hs.eg.db</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># setup data workflow</span>
 <span class="va">counts</span> <span class="op">&lt;-</span>
@@ -728,12 +694,9 @@
 <span class="va">qlf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html">glmQLFTest</a></span><span class="op">(</span><span class="va">fit</span>, coef<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="plots-after-testing-for-differentially-expressed" class="section level2">
+<div id="volcano-plots" class="section level2">
 <h2 class="hasAnchor">
-<a href="#plots-after-testing-for-differentially-expressed" class="anchor"></a>Plots after testing for differentially expressed</h2>
-<div id="volcano-plots" class="section level3">
-<h3 class="hasAnchor">
-<a href="#volcano-plots" class="anchor"></a>Volcano plots</h3>
+<a href="#volcano-plots" class="anchor"></a>Volcano plots</h2>
 <p>Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes (e.g. genes with false-discovery rate &lt; 0.05)</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># volcano plot, minimal</span>
@@ -773,7 +736,6 @@
 <span class="co">#&gt; Scale for 'colour' is already present. Adding another scale for 'colour',</span>
 <span class="co">#&gt; which will replace the existing scale.</span></code></pre></div>
 <p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-32-1.png" width="70%"></p>
-</div>
 </div>
 <div id="automatic-bibliography" class="section level2">
 <h2 class="hasAnchor">
@@ -938,17 +900,13 @@
 <h2 class="hasAnchor">
 <a href="#key-points" class="anchor"></a>Key Points</h2>
 <ul>
-<li>RNA sequencing data can be represented and analysed in a ‘tidy’ way using tidybulk and the tidyverse</li>
-<li>With the modularity offered by piping we don’t need to create variables, unless an object is used more than one. This improves robustness of the code.</li>
-<li>The principles of tidy transcriptomics are to interface as much as possible with commonly known manipulation and visualisation tools, rather than creating custom functions.</li>
-<li>Some of the key steps in an RNA sequencing analysis are (i) filtering lowly abundant transcripts, (ii) adjusting for differences in sequencing depth and composition, (iii) testing for differential expression</li>
-<li>Dimensionality reduction (PCA or MDS) plots are very important for exploring the data</li>
-<li>Density plots, volcano plots, strip-charts and heatmaps are useful visualisation tools for evaluating the hypothesis testing.</li>
+<li>Bulk RNA sequencing data can be represented and analysed in a ‘tidy’ way using tidySummarizedExperiment, tidybulk and the tidyverse.</li>
+<li>tidySummarizedExperiment enables us to visualise and manipulate a Bioconductor SummarizedExperiment object as if it were in tidy data format.</li>
+<li>Some of the key steps in an RNA sequencing analysis are filtering lowly abundant transcripts, adjusting for differences in sequencing depth and composition, testing for differential expression, and visualising the data, which can all be performed in a tidy way with tidybulk.</li>
 <li>
 <code>tidybulk</code> allows streamlined multi-method analyses</li>
 <li>
 <code>tidybulk</code> allow easy analyses of cell type composition</li>
-<li>Testing for differences in tissue composition between samples is analogous to the testing for differences in transcript abundance</li>
 </ul>
 </div>
 <div id="supplementary" class="section level2">
@@ -1262,37 +1220,36 @@
 <span class="co">#&gt; [90m# Transcripts=51958 | Assays=reconstructed[39m</span>
 <span class="co">#&gt;    cell       label batch corrected1 corrected2 corrected3 corrected4 corrected5</span>
 <span class="co">#&gt;    &lt;chr&gt;      &lt;fct&gt; &lt;int&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 CCAGTCACA… 4         1    0.0644     -0.334     -0.0725     0.0560    0.0739 </span>
-<span class="co">#&gt;  2 ATGAGCACA… 8         1    0.178       0.0166    -0.122      0.122    -0.0233 </span>
-<span class="co">#&gt;  3 TATGAATGG… 6         1    0.0602     -0.0356     0.127      0.293    -0.0128 </span>
-<span class="co">#&gt;  4 CATATAGAC… 13        1    0.0761     -0.282     -0.121      0.0546    0.00284</span>
-<span class="co">#&gt;  5 GAGGCAGAC… 1         1    0.0756     -0.0424     0.0977     0.259    -0.0248 </span>
-<span class="co">#&gt;  6 AGCTGCCTT… 5         1    0.117      -0.0242    -0.0729     0.159    -0.0170 </span>
-<span class="co">#&gt;  7 TGATTAGAT… 2         1    0.146      -0.0753    -0.143      0.0488   -0.0915 </span>
-<span class="co">#&gt;  8 ACGAAGCTC… 2         1    0.119      -0.108     -0.127      0.0505   -0.0624 </span>
-<span class="co">#&gt;  9 CGGCATCTT… 4         1    0.00942    -0.407     -0.0466     0.0803    0.0522 </span>
-<span class="co">#&gt; 10 ATAGCGTGC… 4         1    0.0562     -0.367     -0.105      0.0590    0.0610 </span>
+<span class="co">#&gt;  1 CCAGTCACA… 3         1    0.0644      0.334     -0.0725     0.0560   -0.0739 </span>
+<span class="co">#&gt;  2 ATGAGCACA… 10        1    0.178      -0.0167    -0.122      0.122     0.0233 </span>
+<span class="co">#&gt;  3 TATGAATGG… 7         1    0.0603      0.0357     0.127      0.293     0.0128 </span>
+<span class="co">#&gt;  4 CATATAGAC… 12        1    0.0760      0.282     -0.121      0.0546   -0.00285</span>
+<span class="co">#&gt;  5 GAGGCAGAC… 1         1    0.0758      0.0424     0.0977     0.259     0.0248 </span>
+<span class="co">#&gt;  6 AGCTGCCTT… 4         1    0.117       0.0242    -0.0729     0.159     0.0170 </span>
+<span class="co">#&gt;  7 TGATTAGAT… 2         1    0.146       0.0752    -0.143      0.0488    0.0916 </span>
+<span class="co">#&gt;  8 ACGAAGCTC… 2         1    0.119       0.108     -0.127      0.0505    0.0624 </span>
+<span class="co">#&gt;  9 CGGCATCTT… 3         1    0.00949     0.407     -0.0466     0.0803   -0.0522 </span>
+<span class="co">#&gt; 10 ATAGCGTGC… 3         1    0.0561      0.367     -0.105      0.0589   -0.0610 </span>
 <span class="co">#&gt; # … with 2,889 more rows</span></code></pre></div>
 <p>Now we can interrogate the object as if it was a regular tibble data frame.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbmc</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">label</span><span class="op">)</span>
 <span class="co">#&gt; tidySingleCellExperiment says: A data frame is returned for independent data analysis.</span>
-<span class="co">#&gt; # A tibble: 13 x 2</span>
+<span class="co">#&gt; # A tibble: 12 x 2</span>
 <span class="co">#&gt;    label     n</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1 1       424</span>
-<span class="co">#&gt;  2 2       350</span>
-<span class="co">#&gt;  3 3        16</span>
-<span class="co">#&gt;  4 4       339</span>
-<span class="co">#&gt;  5 5       486</span>
-<span class="co">#&gt;  6 6       274</span>
-<span class="co">#&gt;  7 7        21</span>
-<span class="co">#&gt;  8 8       536</span>
-<span class="co">#&gt;  9 9        74</span>
-<span class="co">#&gt; 10 10       41</span>
-<span class="co">#&gt; 11 11      298</span>
-<span class="co">#&gt; 12 12       14</span>
-<span class="co">#&gt; 13 13       26</span></code></pre></div>
+<span class="co">#&gt;  1 1       480</span>
+<span class="co">#&gt;  2 2       367</span>
+<span class="co">#&gt;  3 3       339</span>
+<span class="co">#&gt;  4 4       453</span>
+<span class="co">#&gt;  5 5       520</span>
+<span class="co">#&gt;  6 6        21</span>
+<span class="co">#&gt;  7 7       256</span>
+<span class="co">#&gt;  8 8        74</span>
+<span class="co">#&gt;  9 9        41</span>
+<span class="co">#&gt; 10 10      308</span>
+<span class="co">#&gt; 11 11       14</span>
+<span class="co">#&gt; 12 12       26</span></code></pre></div>
 </div>
 <div id="reduce-dimensions" class="section level2">
 <h2 class="hasAnchor">
@@ -1349,7 +1306,7 @@
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Reference cell types</span>
 <span class="va">blueprint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/datasets.html">BlueprintEncodeData</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; using temporary cache /tmp/RtmpU8YIYV/BiocFileCache</span>
+<span class="co">#&gt; using temporary cache /tmp/RtmphdajZp/BiocFileCache</span>
 <span class="co">#&gt; snapshotDate(): 2021-03-30</span>
 <span class="co">#&gt; see ?celldex and browseVignettes('celldex') for documentation</span>
 <span class="co">#&gt; downloading 1 resources</span>
@@ -1378,22 +1335,21 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">label</span>, <span class="va">first.labels</span><span class="op">)</span>
 
 <span class="va">cell_type</span>
-<span class="co">#&gt; # A tibble: 13 x 2</span>
+<span class="co">#&gt; # A tibble: 12 x 2</span>
 <span class="co">#&gt;    label first.labels   </span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;          </span>
 <span class="co">#&gt;  1 1     NK cells       </span>
 <span class="co">#&gt;  2 2     B-cells        </span>
-<span class="co">#&gt;  3 3     B-cells        </span>
-<span class="co">#&gt;  4 4     Monocytes      </span>
-<span class="co">#&gt;  5 5     Fibroblasts    </span>
-<span class="co">#&gt;  6 6     NK cells       </span>
-<span class="co">#&gt;  7 7     Smooth muscle  </span>
-<span class="co">#&gt;  8 8     Skeletal muscle</span>
-<span class="co">#&gt;  9 9     Neutrophils    </span>
-<span class="co">#&gt; 10 10    Macrophages    </span>
-<span class="co">#&gt; 11 11    Skeletal muscle</span>
-<span class="co">#&gt; 12 12    B-cells        </span>
-<span class="co">#&gt; 13 13    Monocytes</span></code></pre></div>
+<span class="co">#&gt;  3 3     Monocytes      </span>
+<span class="co">#&gt;  4 4     Fibroblasts    </span>
+<span class="co">#&gt;  5 5     Skeletal muscle</span>
+<span class="co">#&gt;  6 6     Smooth muscle  </span>
+<span class="co">#&gt;  7 7     NK cells       </span>
+<span class="co">#&gt;  8 8     Neutrophils    </span>
+<span class="co">#&gt;  9 9     Macrophages    </span>
+<span class="co">#&gt; 10 10    Skeletal muscle</span>
+<span class="co">#&gt; 11 11    B-cells        </span>
+<span class="co">#&gt; 12 12    Monocytes</span></code></pre></div>
 <p>We join the cluster label dataframe to our tidySingleCellExperiment tibble.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Join cell type info</span>
@@ -1407,38 +1363,37 @@
 <span class="co">#&gt; [90m# Transcripts=51958 | Assays=reconstructed[39m</span>
 <span class="co">#&gt;    cell  first.labels batch label corrected1 corrected2 corrected3 corrected4</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 CCAG… Monocytes        1 4        0.0644     -0.334     -0.0725     0.0560</span>
-<span class="co">#&gt;  2 ATGA… Skeletal mu…     1 8        0.178       0.0166    -0.122      0.122 </span>
-<span class="co">#&gt;  3 TATG… NK cells         1 6        0.0602     -0.0356     0.127      0.293 </span>
-<span class="co">#&gt;  4 CATA… Monocytes        1 13       0.0761     -0.282     -0.121      0.0546</span>
-<span class="co">#&gt;  5 GAGG… NK cells         1 1        0.0756     -0.0424     0.0977     0.259 </span>
-<span class="co">#&gt;  6 AGCT… Fibroblasts      1 5        0.117      -0.0242    -0.0729     0.159 </span>
-<span class="co">#&gt;  7 TGAT… B-cells          1 2        0.146      -0.0753    -0.143      0.0488</span>
-<span class="co">#&gt;  8 ACGA… B-cells          1 2        0.119      -0.108     -0.127      0.0505</span>
-<span class="co">#&gt;  9 CGGC… Monocytes        1 4        0.00942    -0.407     -0.0466     0.0803</span>
-<span class="co">#&gt; 10 ATAG… Monocytes        1 4        0.0562     -0.367     -0.105      0.0590</span>
+<span class="co">#&gt;  1 CCAG… Monocytes        1 3        0.0644      0.334     -0.0725     0.0560</span>
+<span class="co">#&gt;  2 ATGA… Skeletal mu…     1 10       0.178      -0.0167    -0.122      0.122 </span>
+<span class="co">#&gt;  3 TATG… NK cells         1 7        0.0603      0.0357     0.127      0.293 </span>
+<span class="co">#&gt;  4 CATA… Monocytes        1 12       0.0760      0.282     -0.121      0.0546</span>
+<span class="co">#&gt;  5 GAGG… NK cells         1 1        0.0758      0.0424     0.0977     0.259 </span>
+<span class="co">#&gt;  6 AGCT… Fibroblasts      1 4        0.117       0.0242    -0.0729     0.159 </span>
+<span class="co">#&gt;  7 TGAT… B-cells          1 2        0.146       0.0752    -0.143      0.0488</span>
+<span class="co">#&gt;  8 ACGA… B-cells          1 2        0.119       0.108     -0.127      0.0505</span>
+<span class="co">#&gt;  9 CGGC… Monocytes        1 3        0.00949     0.407     -0.0466     0.0803</span>
+<span class="co">#&gt; 10 ATAG… Monocytes        1 3        0.0561      0.367     -0.105      0.0589</span>
 <span class="co">#&gt; # … with 2,889 more rows, and 4 more variables: corrected5 &lt;dbl&gt;, UMAP1 &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   UMAP2 &lt;dbl&gt;, UMAP3 &lt;dbl&gt;</span></code></pre></div>
 <p>We can easily summarise the results. For example, we can see how cell type classification overlaps with cluster classification.</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbmc</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">label</span>, <span class="va">first.labels</span><span class="op">)</span>
 <span class="co">#&gt; tidySingleCellExperiment says: A data frame is returned for independent data analysis.</span>
-<span class="co">#&gt; # A tibble: 13 x 3</span>
+<span class="co">#&gt; # A tibble: 12 x 3</span>
 <span class="co">#&gt;    label first.labels        n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;           &lt;int&gt;</span>
-<span class="co">#&gt;  1 1     NK cells          424</span>
-<span class="co">#&gt;  2 10    Macrophages        41</span>
-<span class="co">#&gt;  3 11    Skeletal muscle   298</span>
-<span class="co">#&gt;  4 12    B-cells            14</span>
-<span class="co">#&gt;  5 13    Monocytes          26</span>
-<span class="co">#&gt;  6 2     B-cells           350</span>
-<span class="co">#&gt;  7 3     B-cells            16</span>
-<span class="co">#&gt;  8 4     Monocytes         339</span>
-<span class="co">#&gt;  9 5     Fibroblasts       486</span>
-<span class="co">#&gt; 10 6     NK cells          274</span>
-<span class="co">#&gt; 11 7     Smooth muscle      21</span>
-<span class="co">#&gt; 12 8     Skeletal muscle   536</span>
-<span class="co">#&gt; 13 9     Neutrophils        74</span></code></pre></div>
+<span class="co">#&gt;  1 1     NK cells          480</span>
+<span class="co">#&gt;  2 10    Skeletal muscle   308</span>
+<span class="co">#&gt;  3 11    B-cells            14</span>
+<span class="co">#&gt;  4 12    Monocytes          26</span>
+<span class="co">#&gt;  5 2     B-cells           367</span>
+<span class="co">#&gt;  6 3     Monocytes         339</span>
+<span class="co">#&gt;  7 4     Fibroblasts       453</span>
+<span class="co">#&gt;  8 5     Skeletal muscle   520</span>
+<span class="co">#&gt;  9 6     Smooth muscle      21</span>
+<span class="co">#&gt; 10 7     NK cells          256</span>
+<span class="co">#&gt; 11 8     Neutrophils        74</span>
+<span class="co">#&gt; 12 9     Macrophages        41</span></code></pre></div>
 </div>
 </div>
 <div id="pseudobulk-analyses" class="section level2">
@@ -1505,10 +1460,6 @@
 <a href="#key-points-1" class="anchor"></a>Key Points</h2>
 <ul>
 <li>Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell type classification</li>
-<li>
-<code>tidySingleCellExperiment</code> is an invisible layer that operates on a <code>SingleCellExperiment</code> object and enables us to visualise and manipulate data as if it were a tidy data frame.</li>
-<li>
-<code>tidySingleCellExperiment</code> object is a <code>SingleCellExperiment object</code> so it can be used with any <code>SingleCellExperiment</code> compatible method</li>
 <li>
 <code>tidySingleCellExperiment</code> is an invisible layer that operates on a <code>SingleCellExperiment</code> object and enables us to visualise and manipulate data as if it were a tidy data frame.</li>
 <li>
@@ -1590,7 +1541,7 @@
 <span class="co">#&gt;  [37] reshape_0.8.8                 ellipsis_0.3.1               </span>
 <span class="co">#&gt;  [39] RSpectra_0.16-0               annotate_1.69.2              </span>
 <span class="co">#&gt;  [41] biomaRt_2.47.6                sparseMatrixStats_1.3.7      </span>
-<span class="co">#&gt;  [43] vctrs_0.3.7                   remotes_2.2.0                </span>
+<span class="co">#&gt;  [43] vctrs_0.3.7                   remotes_2.3.0                </span>
 <span class="co">#&gt;  [45] Cairo_1.5-12.2                cachem_1.0.4                 </span>
 <span class="co">#&gt;  [47] withr_2.4.1                   GenomicAlignments_1.27.2     </span>
 <span class="co">#&gt;  [49] prettyunits_1.1.1             dittoSeq_1.3.7               </span>
