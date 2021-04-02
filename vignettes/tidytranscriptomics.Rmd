@@ -52,24 +52,8 @@ First, let’s load all the packages we will need to analyse the data.
 _Note: you should load the *tidybulk* and *tidySummarizedExperiment* libraries after the tidyverse core packages for best integration._
 
 ```{r message=FALSE, warning=FALSE}
-# load libraries
-
-# dataset
 library(airway)
-
-# tidyverse core packages
-library(tibble)
-library(dplyr)
-library(tidyr)
-library(readr)
-library(stringr)
 library(ggplot2)
-library(purrr)
-
-# tidyverse-friendly packages
-library(plotly)
-library(ggrepel)
-library(GGally)
 library(tidyHeatmap)
 library(tidybulk)
 # library(tidySummarizedExperiment) # we'll load this below to show what it can do
@@ -104,7 +88,7 @@ custom_theme <-
 
 ### tidySummarizedExperiment
 
-Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. The data in the airway package is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information on these objects see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment).
+Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. 
 
 ```{r}
 # load airway RNA sequencing data
@@ -113,6 +97,8 @@ data(airway)
 # take a look
 airway
 ```
+
+The data in the airway package is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html). 
 
 The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SummarizedExperiment* behaviour.
 
@@ -161,7 +147,7 @@ We can use `mutate` to create a column. For example, we could create a new sampl
 
 ```{r}
 airway %>%
-  mutate(sample_name=str_remove(sample, "SRR1039")) %>%
+  mutate(sample_name=stringr::str_remove(sample, "SRR1039")) %>%
   # select columns to view    
   select(sample, sample_name)
 ```
@@ -174,7 +160,7 @@ We'll set up the airway data for our RNA-seq analysis. We'll create the column w
 # setup data workflow
 counts <-
   airway %>%
-  mutate(sample_name = str_remove(sample, "SRR1039")) %>%
+  mutate(sample_name = stringr::str_remove(sample, "SRR1039")) %>%
   mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
     keys = transcript,
     keytype = "ENSEMBL",
@@ -325,7 +311,7 @@ counts_scal_PCA %>%
   pivot_sample() %>%
   ggplot(aes(x = PC1, y = PC2, colour = dex, shape = cell)) +
   geom_point() +
-  geom_text_repel(aes(label = sample_name), show.legend = FALSE) +
+  ggrepel::geom_text_repel(aes(label = sample_name), show.legend = FALSE) +
   custom_theme
 ```
 
@@ -432,17 +418,7 @@ We can visually compare the significance for all methods. We will notice that th
 de_all %>%
   pivot_transcript() %>%
   select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, transcript) %>%
-  ggpairs(1:4)
-```
-
-In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes is very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives. 
-
-We can count how many differentially expressed genes there are, for example with the edgeR QLT method. We'll filter on FDR 0.05.
-
-```{r}
-de_all %>%
-  filter(edgerQLT_FDR < 0.05) %>%
-  summarise(num_de = n_distinct(transcript))
+  GGally::ggpairs(1:4)
 ```
 
 ### Single method
@@ -475,7 +451,8 @@ qlf <- glmQLFTest(fit, coef=2)
 
 ## Volcano plots
 
-Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes (e.g. genes with false-discovery rate < 0.05)
+Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes e.g. genes with false-discovery rate < 0.05. In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes is very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives. 
+
 
 ```{r out.width = "70%"}
 # volcano plot, minimal
@@ -511,7 +488,7 @@ counts_de %>%
   # Plot
   ggplot(aes(x = logFC, y = PValue, label = symbol)) +
   geom_point(aes(color = significant, size = significant, alpha = significant)) +
-  geom_text_repel() +
+  ggrepel::geom_text_repel() +
 
   # Custom scales
   custom_theme +
@@ -606,15 +583,9 @@ SingleCellExperiment object as a tidyverse tibble, and provides SingleCellExperi
 
 
 ```{r message=FALSE, warning=FALSE}
-
-# load additional libraries
-library(bioc2021tidytranscriptomics)
-library(dplyr)
+# load packages
 library(ggplot2)
 library(purrr)
-library(stringr)
-library(SummarizedExperiment)
-library(SingleCellExperiment)
 library(scater)
 library(scran)
 library(igraph)
@@ -688,7 +659,7 @@ A key quality control step performed in single cell analysis is assessment of th
 ```{r}
 
 my_tibble = 
-  tibble(
+  tibble::tibble(
   label = c("a","a","a","a","a","b","b","b","b","b" ),
   value = 1:10
 )
@@ -719,8 +690,6 @@ my_tibble_nested %>%
 
 
 ```
-
-
 
 ```{r}
 # Get chromosomal location for gene symbols
@@ -950,20 +919,20 @@ To do this, we will load a helper function called `aggregate_cells` from [GitHub
 devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
 
 # Aggregate
-pbmc_bulk = 
-  bioc2021tidytranscriptomics::pbmc %>% 
-  aggregate_cells(file) 
-
-pbmc_bulk
+# pbmc_bulk = 
+#   bioc2021tidytranscriptomics::pbmc %>% 
+#   aggregate_cells(file) 
+# 
+# pbmc_bulk
 ```
 
 ```{r}
 
-pbmc_bulk %>%
-  
-  # Tidybulk operations
-  tidybulk::identify_abundant() %>%
-  tidybulk::scale_abundance()
+# pbmc_bulk %>%
+#   
+#   # Tidybulk operations
+#   tidybulk::identify_abundant() %>%
+#   tidybulk::scale_abundance()
 ```
 
 ## Key Points
