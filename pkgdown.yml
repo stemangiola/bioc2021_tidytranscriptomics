@@ -5,7 +5,7 @@ articles:
   background: background.html
   supplementary: supplementary.html
   tidytranscriptomics: tidytranscriptomics.html
-last_built: 2021-04-01T17:04Z
+last_built: 2021-04-06T04:15Z
 urls:
   reference: https://stemangiola.github.io/bioc2021_tidytranscriptomics/reference
   article: https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles
