@@ -52,8 +52,22 @@ First, let’s load all the packages we will need to analyse the data.
 _Note: you should load the *tidybulk* and *tidySummarizedExperiment* libraries after the tidyverse core packages for best integration._
 
 ```{r message=FALSE, warning=FALSE}
+# dataset
 library(airway)
+
+# tidyverse core packages
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(stringr)
 library(ggplot2)
+library(purrr)
+
+# tidyverse-friendly packages
+library(plotly)
+library(ggrepel)
+library(GGally)
 library(tidyHeatmap)
 library(tidybulk)
 # library(tidySummarizedExperiment) # we'll load this below to show what it can do
@@ -140,7 +154,7 @@ We can use `mutate` to create a column. For example, we could create a new sampl
 
 ```{r}
 airway %>%
-  mutate(sample_name=stringr::str_remove(sample, "SRR1039")) %>%
+  mutate(sample_name=str_remove(sample, "SRR1039")) %>%
   # select columns to view    
   select(sample, sample_name)
 ```
@@ -153,7 +167,7 @@ We'll set up the airway data for our RNA-seq analysis. We'll create the column w
 # setup data workflow
 counts <-
   airway %>%
-  mutate(sample_name = stringr::str_remove(sample, "SRR1039")) %>%
+  mutate(sample_name = str_remove(sample, "SRR1039")) %>%
   mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
     keys = transcript,
     keytype = "ENSEMBL",
@@ -304,7 +318,7 @@ counts_scal_PCA %>%
   pivot_sample() %>%
   ggplot(aes(x = PC1, y = PC2, colour = dex, shape = cell)) +
   geom_point() +
-  ggrepel::geom_text_repel(aes(label = sample_name), show.legend = FALSE) +
+  geom_text_repel(aes(label = sample_name), show.legend = FALSE) +
   custom_theme
 ```
 
@@ -411,7 +425,7 @@ We can visually compare the significance for all methods. We will notice that th
 de_all %>%
   pivot_transcript() %>%
   select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, transcript) %>%
-  GGally::ggpairs(1:4)
+  ggpairs(1:4)
 ```
 
 ### Single method
@@ -481,7 +495,7 @@ counts_de %>%
   # Plot
   ggplot(aes(x = logFC, y = PValue, label = symbol)) +
   geom_point(aes(color = significant, size = significant, alpha = significant)) +
-  ggrepel::geom_text_repel() +
+  geom_text_repel() +
 
   # Custom scales
   custom_theme +
@@ -929,6 +943,31 @@ We can easily summarise the results. For example, we can see how cell type class
 pbmc %>% count(label, first.labels)
 ```
 
+## Pseudobulk analyses
+
+It is sometime useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis see [here](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html).
+
+### Data exploration using pseudobulk samples
+
+To do this, we will load a helper function called `aggregate_cells` from [GitHub Gist](https://gist.github.com/stemangiola/ebce5a3f931b298611b56680d39c073c) and use it to create a group for each sample.
+
+```{r warning=FALSE, message=FALSE}
+# Load aggregate function
+devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
+# Aggregate
+pbmc_bulk = 
+  bioc2021tidytranscriptomics::pbmc %>% 
+  aggregate_cells(file) 
+pbmc_bulk
+```
+
+```{r}
+pbmc_bulk %>%
+  
+  # Tidybulk operations
+  tidybulk::identify_abundant() %>%
+  tidybulk::scale_abundance()
+```
 
 ## Key Points
 - Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell type classification
