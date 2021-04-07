@@ -651,10 +651,6 @@ A key quality control step performed in single cell analysis is assessment of th
 
 A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources, we can nest by dataset and analyse the mitochondrial content for each.
 
-```{r, echo=FALSE, out.width = "600px"}
-knitr::include_graphics("../inst/vignettes/nesting.png")
-```
-
 To demonstrate the power of nesting we'll first show the mitochondrial analysis for one of the 10 datasets.
 
 ```{r}
@@ -702,6 +698,10 @@ mito_info_one_dataset
 ```
 
 The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/nesting.png")
+```
 
 ```{r}
 pbmc_nested <- pbmc %>% 
