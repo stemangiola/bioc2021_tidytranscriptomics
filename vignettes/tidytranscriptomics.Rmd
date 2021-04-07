@@ -572,8 +572,6 @@ BRCA_cell_type_long %>%
 - `tidybulk` allows streamlined multi-method analyses
 - `tidybulk` allow easy analyses of cell type composition
 
-## Supplementary
-Some things we don't have time to cover in Part 1 of this workshop can be found in the [Supplementary material](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/supplementary.html).
 
 # Part 2 Single-cell RNA-seq with tidySingleCellExperiment
 
