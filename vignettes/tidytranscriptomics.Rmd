@@ -52,8 +52,6 @@ First, let’s load all the packages we will need to analyse the data.
 _Note: you should load the *tidybulk* and *tidySummarizedExperiment* libraries after the tidyverse core packages for best integration._
 
 ```{r message=FALSE, warning=FALSE}
-# load libraries
-
 # dataset
 library(airway)
 
@@ -104,7 +102,7 @@ custom_theme <-
 
 ### tidySummarizedExperiment
 
-Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. The data in the airway package is a Bioconductor *RangedSummarizedExperiment* object, a type of *SummarizedExperiment* object. For more information on these objects see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html#anatomy-of-a-summarizedexperiment).
+Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. 
 
 ```{r}
 # load airway RNA sequencing data
@@ -113,6 +111,8 @@ data(airway)
 # take a look
 airway
 ```
+
+The data in the airway package is a Bioconductor *SummarizedExperiment* object. For more information see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html). 
 
 The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SummarizedExperiment* behaviour.
 
@@ -136,12 +136,12 @@ assays(airway)
 
 ### Tidyverse commands
 
-And now we can also use tidyverse commands, such as `filter`, `select`, `mutate`, `group_by` and `summarise`, to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
+And now we can also use tidyverse commands, such as `filter`, `select` and `mutate` to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
 
-We can use `filter` to choose rows, for example, to see just the rows for the untreated samples.
+We can use `filter` to choose rows, for example, to see just the rows for the treated samples.
 
 ```{r}
-airway %>% filter(dex == "untrt")
+airway %>% filter(dex == "trt")
 ```
 
 We can use `select` to choose columns, for example, to see the sample, cell line and treatment columns.
@@ -150,13 +150,6 @@ We can use `select` to choose columns, for example, to see the sample, cell line
 airway %>% select(sample, cell, dex)
 ```
 
-We can use `group_by` and `summarise` to summarise information, for example to get the total counts for each sample.
-
-```{r}
-airway %>%
-    group_by(sample, cell, dex) %>%
-    summarise(total_counts=sum(counts))
-```
 We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
 
 ```{r}
@@ -435,16 +428,6 @@ de_all %>%
   ggpairs(1:4)
 ```
 
-In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes is very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives. 
-
-We can count how many differentially expressed genes there are, for example with the edgeR QLT method. We'll filter on FDR 0.05.
-
-```{r}
-de_all %>%
-  filter(edgerQLT_FDR < 0.05) %>%
-  summarise(num_de = n_distinct(transcript))
-```
-
 ### Single method
 
 If we just wanted to run one differential testing method we could do that. The default method is edgeR quasi-likelihood.
@@ -475,7 +458,8 @@ qlf <- glmQLFTest(fit, coef=2)
 
 ## Volcano plots
 
-Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes (e.g. genes with false-discovery rate < 0.05)
+Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes e.g. genes with false-discovery rate < 0.05. In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes is very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives. 
+
 
 ```{r out.width = "70%"}
 # volcano plot, minimal
@@ -588,33 +572,17 @@ BRCA_cell_type_long %>%
 - `tidybulk` allows streamlined multi-method analyses
 - `tidybulk` allow easy analyses of cell type composition
 
-## Supplementary
-Some things we don't have time to cover in Part 1 of this workshop can be found in the [Supplementary material](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/supplementary.html).
 
 # Part 2 Single-cell RNA-seq with tidySingleCellExperiment
 
-[Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1)
+A typical scRNA-seq workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step but you can read more about scRNA-seq workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
 
 In Part 1 we showed how we can study the cell-type composition of a biological sample using bulk RNA sequencing.  Single cell sequencing enables a more direct estimation of cell-type composition and gives greater resolution. For bulk RNA sequencing we need to infer the cell types using the abundance of transcripts in the whole sample, with single-cell RNA sequencing we can directly measure the transcripts in each cell and then classify the cells into cell types. 
 
-## Introduction to tidySingleCellExperiment
-
-SingleCellExperiment is a very popular container of single cell RNA sequencing data.
-
-tidySingleCellExperiment provides a bridge between the SingleCellExperiment single-cell package and the tidyverse. It creates an invisible layer that enables viewing the
-SingleCellExperiment object as a tidyverse tibble, and provides SingleCellExperiment-compatible *dplyr*, *tidyr*, *ggplot* and *plotly* functions.
-
-
 ```{r message=FALSE, warning=FALSE}
-
-# load additional libraries
-library(bioc2021tidytranscriptomics)
-library(dplyr)
+# load packages
 library(ggplot2)
 library(purrr)
-library(stringr)
-library(SummarizedExperiment)
-library(SingleCellExperiment)
 library(scater)
 library(scran)
 library(igraph)
@@ -627,46 +595,41 @@ library(ggbeeswarm)
 library(tidySingleCellExperiment)
 ```
 
+## Introduction to tidySingleCellExperiment
 
-The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (pbmc) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). 
+The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (pbmc) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in [SingleCellExperiment](https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) format. SingleCellExperiment is a very popular container of single cell RNA sequencing data.
+
+Similar to what we saw with tidySummarizedExperiment, `tidySingleCellExperiment` package enables any *SingleCellExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SingleCellExperiment* behaviour.
+
+If we load the *tidySingleCellExperiment* package and then view the pbmc data it displays as a tibble.
 
 ```{r}
+# load pbmc single cell RNA sequencing data
 pbmc <- bioc2021tidytranscriptomics::pbmc
 
-```
-
-### `tidySingleCellExperiment`
-
-This is a SingleCellExperiment object but it is evaluated as tibble. So it is fully compatible both with SingleCellExperiment and tidyverse APIs.
-
-**It looks like a tibble**
-
-```{r}
+# take a look
 pbmc
 ```
 
-**But it is a SingleCellExperiment object after all**
-
-So it can be interacted with using [SingleCellExperiment commands](https://bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) such as `assayNames`.
+It can be interacted with using [SingleCellExperiment commands](https://bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) such as `assayNames`.
 
 ```{r}
-assayNames(pbmc) # from SummarizedExperiment
+assayNames(pbmc)
 ```
 
-## Extract gene information
+We can also interact with our object as we do with any tidyverse tibble. 
 
-We can join transcript-wise information for independent analyses
+## Setting up the data
+
+In this case we want to polish an annotation column. We will extract the sample, dataset and group information from the file name column into separate columns.
 
 ```{r}
-pbmc %>%  join_transcripts("CD3G")
-
+# First take a look at the file column
+pbmc %>% select(file)
 ```
 
-## Polish the data
-
-We can also interact with our object as we do with any tidyverse tibble. In this case we want to polish an annotation column. We will extract the sample and dataset names from the file name column into separate columns.
-
 ```{r}
+# Create columns for sample, dataset and groups
 pbmc <-
   pbmc %>%
 
@@ -676,54 +639,80 @@ pbmc <-
   # Extract data source
   extract(file, c("dataset", "groups"), "../data/([a-zA-Z0-9_]+)_([0-9])/outs.+")
 
-pbmc
+# Take a look
+pbmc %>% select(sample, dataset, groups)
 ```
 
 ## Quality control
 
-A key quality control step performed in single cell analysis is assessment of the proportion of mitochondrial transcripts. A high mitochondrial count can indicate the cell is dead or dying and is thus poor quality. A powerful combination of tools we can use with tidySingleCellExperiment is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame) and `map`. This enables us to easily perform independent analyses on subsets of the data. For example, we can nest by dataset and use map to iterate the analysis of mitochondrial content across each dataset.
+A key quality control step performed in single cell analysis is assessment of the proportion of mitochondrial transcripts. A high mitochondrial count can indicate the cell is dead or dying and is thus poor quality and should be filtered out. 
 
 ### Nesting
 
-```{r}
+A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources, we can nest by dataset and analyse the mitochondrial content for each.
 
-my_tibble = 
-  tibble(
-  label = c("a","a","a","a","a","b","b","b","b","b" ),
-  value = 1:10
-)
-
-my_tibble
-
-my_tibble_nested = 
-  my_tibble %>%
-  nest(data = value)
-
-my_tibble_nested
-
-# Summarise
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value)))
-  
-# Summarise + filter
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
-  filter(average == max(average)) %>%
-  unnest(data)
-
-# Summarise + update
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
-  mutate(data = map2(data, average, ~ .x - .y )) %>%
-  unnest(data)
-
-
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/nesting.png")
 ```
 
-
+To demonstrate the power of nesting we'll first show the mitochondrial analysis for one of the 10 datasets.
 
 ```{r}
-# Get chromosomal location for gene symbols
+one_dataset <- pbmc %>% filter(dataset =="GSE115189")
+```
+
+We get the chromosomal location for each gene in the dataset so we can identify the mitochondrial genes. We'll get a warning that some of the ids don't find a match but it should be just a small proportion. 
+
+```{r}
+location <- mapIds(
+  EnsDb.Hsapiens.v86,
+  keys = rownames(one_dataset),
+  column = "SEQNAME",
+  keytype = "SYMBOL"
+)
+```
+
+Next we calculate the mitchondrial content for each cell in the dataset.
+
+```{r}
+mito_info_one_dataset <- perCellQCMetrics(one_dataset, subsets = list(Mito = which(location == "MT")))
+
+mito_info_one_dataset
+```
+
+We then label the cells with high mitochondrial content as outliers.
+
+```{r}  
+mito_info_one_dataset <- mito_info_one_dataset %>%     
+      # Converting to tibble
+      as_tibble(rownames = "cell") %>%
+
+      # Label cells with high mitochondrial content
+      mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
+
+mito_info_one_dataset
+```
+
+Finally, we join the mitochondrial information back to the original data so we will be able to filter out the cells with high mitochondrial content.
+
+```{r}
+mito_info_one_dataset <- left_join(one_dataset, mito_info_one_dataset, by = "cell")
+
+mito_info_one_dataset
+```
+
+The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
+
+```{r}
+pbmc_nested <- pbmc %>% 
+    nest(data = -dataset)
+
+pbmc_nested
+```
+
+We will create a table (tibble) with the mitochondrial QC information for each dataset. Here we use `map` which is often used in combination with `nest` to perform commands on nested data.
+
+```{r}
 location <- mapIds(
   EnsDb.Hsapiens.v86,
   keys = rownames(pbmc),
@@ -731,35 +720,50 @@ location <- mapIds(
   keytype = "SYMBOL"
 )
 
-pbmc <-
-  pbmc %>%
-
-  # Grouping - nesting by dataset
-  nest(data = -dataset) %>%
-  mutate(mitochondrion_info = map(
+mito_info_all_datasets <- pbmc_nested %>%
+    mutate(mitochondrion_info = map(
     data,
-    ~ # Calculating mitochondrial statistics
+    ~ # Calculate mitochondrial statistics
       perCellQCMetrics(.x, subsets = list(Mito = which(location == "MT"))) %>%
       
-      # Converting to tibble
+      # Convert to tibble
       as_tibble(rownames = "cell") %>%
 
       # Label cells with high mitochondrial content
       mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
-  )) %>%
+  ))
   
-  # Join the information
-  mutate(data = map2(
+mito_info_all_datasets
+```
+
+As before, we join the mitochondrial information to the original data.
+
+```{r}
+  # Join the mitochondrial information to the original SingleCellExperiment data
+ mito_info_all_datasets <- mito_info_all_datasets %>%
+    mutate(data = map2(
     data, mitochondrion_info,
     ~ left_join(.x, .y, by = "cell")
   )) %>%
   
-  select(-mitochondrion_info) %>%
-  
-  unnest(data)
+  # Remove the separate mitochondrial information table
+  select(-mitochondrion_info)
+
+mito_info_all_datasets
 ```
 
-We can use tidyverse to reshape the data and create beeswarm plots to visualise the mitochondrial content. 
+Remove the nesting to get back one table containing all datasets.
+ 
+```{r}
+pbmc <- mito_info_all_datasets %>%
+  unnest(data)
+
+pbmc
+```
+
+Nesting has allowed us to perform the QC on each dataset in an efficient way.
+
+We can use tidyverse to reshape the data and create [beeswarm plots](http://www.cbs.dtu.dk/~eklund/beeswarm/) to visualise the mitochondrial content. 
 
 ```{r, warning=FALSE}
 pbmc %>%
@@ -786,7 +790,7 @@ pbmc %>%
 
 In the faceted plot, detected is number of genes in each of the 10 datasets, sum is total counts.
 
-We filter out cells with high mitochondrial content.
+We then proceed to filter out cells with high mitochondrial content.
 
 ```{r}
 pbmc <- pbmc %>% filter(!high_mitochondrion)
@@ -794,7 +798,7 @@ pbmc <- pbmc %>% filter(!high_mitochondrion)
 
 ## Scaling and Integrating
 
-We need to integrate the different datasets to adjust for technical variability between them. For integration we have chosen 10x_8K (dataset number 3) as reference because it is relatively high quality.
+As we are working with multiple datasets, we need to integrate them and adjust for technical variability between them. Here we'll nest by dataset (batch), normalise within each batch with `multiBatchNorm` and correct for batch effects with `fastMNN`.
 
 ```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE}
 # Scaling within each dataset
@@ -815,7 +819,7 @@ pbmc <-
 
 ## Identify clusters 
 
-We proceed with cluster identification with scran FindNeighbors constructs a Shared Nearest Neighbor (SNN) Graph for a given dataset. The k-nearest neighbours of each cell are first determined. FindClusters identifies clusters of cells by a shared nearest neighbour (SNN). 
+We proceed with identifying cell clusters. 
 
 ```{r cluster}
 # Assign clusters to the 'colLabels'
@@ -831,7 +835,7 @@ colLabels(pbmc) <- # from SingleCellExperiment
 pbmc %>% select(label, everything())
 ```
 
-Now we can interrogate the object as if it was a regular tibble data frame.
+Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use `count` to count the number of cells in each cluster.
 
 ```{r cluster count SingleCellExperiment}
 pbmc %>% count(label)
@@ -870,7 +874,7 @@ knitr::include_graphics("../inst/vignettes/plotly_2.png")
 
 ### Manual cell type classification
 
-We can identify cluster markers (genes) using scran As example, we are selecting the top 10 for each cluster. The function DoHeatmap builds an heatmap of those gene markers across cells.
+We can identify cluster markers (genes). As example, we are selecting the top 10 for each cluster. We can then plot a heatmap of those gene markers across cells.
 
 ```{r}
 # Identify top 10 markers per cluster
@@ -889,7 +893,6 @@ pbmc %>%
     colour_columns_by=c("label"), 
     exprs_values  = "reconstructed"
   ) 
-
 ```
 
 ### Automatic cell type classification
@@ -920,7 +923,7 @@ cell_type <-
 cell_type
 ```
 
-We join the cluster label dataframe to our tidySingleCellExperiment tibble.
+We join the cell type information to our pbmc data.
 
 ```{r}
 # Join cell type info
@@ -937,6 +940,7 @@ We can easily summarise the results. For example, we can see how cell type class
 ```{r}
 pbmc %>% count(label, first.labels)
 ```
+
 ## Pseudobulk analyses
 
 It is sometime useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis see [here](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html).
@@ -948,17 +952,14 @@ To do this, we will load a helper function called `aggregate_cells` from [GitHub
 ```{r warning=FALSE, message=FALSE}
 # Load aggregate function
 devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
-
 # Aggregate
 pbmc_bulk = 
   bioc2021tidytranscriptomics::pbmc %>% 
   aggregate_cells(file) 
-
 pbmc_bulk
 ```
 
 ```{r}
-
 pbmc_bulk %>%
   
   # Tidybulk operations
