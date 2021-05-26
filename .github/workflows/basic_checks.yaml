@@ -70,11 +70,11 @@ jobs:
           BRANCH: gh-pages # The branch the action should deploy to.
           FOLDER: docs # The folder the action should deploy
         
-       - uses: docker/build-push-action@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-           repository: stemangiola/bioc2021_tidytranscriptomics
-           tag_with_ref: true
-           tag_with_sha: true
-           tags: bioc2021
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: stemangiola/bioc2021_tidytranscriptomics
+          tag_with_ref: true
+          tag_with_sha: true
+          tags: bioc2021
