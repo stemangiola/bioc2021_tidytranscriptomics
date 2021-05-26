@@ -1,4 +1,9 @@
 on: [push]
+
+env:
+  cache-version: v1
+  repo-name: stemangiola/bioc2021_tidytranscriptomics
+
 jobs:
   job1:
     runs-on: ubuntu-latest
@@ -8,8 +13,6 @@ jobs:
 
       - name: Query dependencies and update old packages
         run: |
-          install.packages('remotes')
-          options(repos = c(CRAN = 'https://cran.r-project.org'))
           BiocManager::install(ask=FALSE)
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
@@ -19,8 +22,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: /usr/local/lib/R/site-library
-          key: ${{ runner.os }}-r-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-1-
+          key: ${{ env.cache-version }}-${{ runner.os }}-r-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-r-
           
        # This lets us augment with additional dependencies	
       - name: Install system dependencies	
@@ -49,16 +52,6 @@ jobs:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
-    
-       Commenting out til get first version passing other actions    
-       - uses: docker/build-push-action@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-           repository: stemangiola/bioc2021_tidytranscriptomics
-           tag_with_ref: true
-           tag_with_sha: true
-           tags: bioc2021
 
       - name: Build pkgdown
         run: |
@@ -75,4 +68,13 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: docs # The folder the action should deploy.
+          FOLDER: docs # The folder the action should deploy
+        
+       - uses: docker/build-push-action@v1
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+           repository: stemangiola/bioc2021_tidytranscriptomics
+           tag_with_ref: true
+           tag_with_sha: true
+           tags: bioc2021
