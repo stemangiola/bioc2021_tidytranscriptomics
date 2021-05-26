@@ -74,7 +74,7 @@ Recommended Background Reading
 
 ### Workshop Participation
 
-The workshop format is a 2 hour session consisting of hands-on demos and Q&A.
+The workshop format is a 1.5 hour session consisting of hands-on demos and Q&A.
 
 ### _R_ / _Bioconductor_ packages used
 
@@ -100,9 +100,9 @@ Guide
 
 | Activity - Hands on demos with Q&A                                 | Time |
 |--------------------------------------------------------------------|------|
-| Part 1 Bulk RNA-seq with tidybulk                                  |  60  |
-| Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  60  |
-| Total                                                              | 120m |
+| Part 1 Bulk RNA-seq with tidybulk                                  |  45  |
+| Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  45  |
+| Total                                                              |  90m |
 
 ### Workshop goals and objectives
 
