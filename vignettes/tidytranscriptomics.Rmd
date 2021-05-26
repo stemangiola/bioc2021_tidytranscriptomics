@@ -169,7 +169,7 @@ counts <-
   airway %>%
   mutate(sample_name = str_remove(sample, "SRR1039")) %>%
   mutate(symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
-    keys = transcript,
+    keys = feature,
     keytype = "ENSEMBL",
     column = "SYMBOL",
     multiVals = "first"
@@ -339,7 +339,7 @@ counts_scal_PCA %>%
   # create heatmap
   heatmap(
     .column = sample_name,
-    .row = transcript,
+    .row = feature,
     .value = counts_scaled,
     transform = log1p
   ) %>%
@@ -424,7 +424,7 @@ We can visually compare the significance for all methods. We will notice that th
 ```{r message=FALSE}
 de_all %>%
   pivot_transcript() %>%
-  select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, transcript) %>%
+  select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, feature) %>%
   ggpairs(1:4)
 ```
 
