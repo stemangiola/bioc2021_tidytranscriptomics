@@ -1156,16 +1156,16 @@
 <span class="co">#&gt; [90m# Features=51958 | Assays=reconstructed[39m</span>
 <span class="co">#&gt;    cell       label batch corrected1 corrected2 corrected3 corrected4 corrected5</span>
 <span class="co">#&gt;    &lt;chr&gt;      &lt;fct&gt; &lt;int&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 CCAGTCACA… 6         1   -0.0617     0.326       0.0957    -0.0551   0.0350  </span>
-<span class="co">#&gt;  2 ATGAGCACA… 2         1   -0.186     -0.0269      0.131     -0.105   -0.0344  </span>
-<span class="co">#&gt;  3 TATGAATGG… 7         1   -0.0572     0.0181     -0.0838    -0.309   -0.000210</span>
-<span class="co">#&gt;  4 CATATAGAC… 4         1   -0.0760     0.267       0.142     -0.0551  -0.0161  </span>
-<span class="co">#&gt;  5 GAGGCAGAC… 1         1   -0.0744     0.0263     -0.0591    -0.273   -0.00626 </span>
-<span class="co">#&gt;  6 AGCTGCCTT… 3         1   -0.121      0.00769     0.0987    -0.152    0.0126  </span>
-<span class="co">#&gt;  7 TGATTAGAT… 5         1   -0.145      0.0643      0.128     -0.0408  -0.173   </span>
-<span class="co">#&gt;  8 ACGAAGCTC… 5         1   -0.120      0.0916      0.137     -0.0487  -0.0677  </span>
-<span class="co">#&gt;  9 CGGCATCTT… 6         1   -0.00205    0.395       0.0775    -0.0863   0.0284  </span>
-<span class="co">#&gt; 10 ATAGCGTGC… 6         1   -0.0557     0.353       0.138     -0.0602   0.0463  </span>
+<span class="co">#&gt;  1 CCAGTCACA… 6         1   -0.0617    -0.326      -0.0957    -0.0551   0.0350  </span>
+<span class="co">#&gt;  2 ATGAGCACA… 2         1   -0.186      0.0269     -0.131     -0.105   -0.0344  </span>
+<span class="co">#&gt;  3 TATGAATGG… 7         1   -0.0573    -0.0182      0.0838    -0.310   -0.000233</span>
+<span class="co">#&gt;  4 CATATAGAC… 3         1   -0.0761    -0.267      -0.142     -0.0552  -0.0161  </span>
+<span class="co">#&gt;  5 GAGGCAGAC… 1         1   -0.0745    -0.0264      0.0591    -0.273   -0.00628 </span>
+<span class="co">#&gt;  6 AGCTGCCTT… 4         1   -0.121     -0.00772    -0.0987    -0.152    0.0125  </span>
+<span class="co">#&gt;  7 TGATTAGAT… 5         1   -0.145     -0.0643     -0.128     -0.0408  -0.173   </span>
+<span class="co">#&gt;  8 ACGAAGCTC… 5         1   -0.120     -0.0917     -0.137     -0.0487  -0.0677  </span>
+<span class="co">#&gt;  9 CGGCATCTT… 6         1   -0.00215   -0.395      -0.0775    -0.0863   0.0284  </span>
+<span class="co">#&gt; 10 ATAGCGTGC… 6         1   -0.0557    -0.353      -0.138     -0.0602   0.0463  </span>
 <span class="co">#&gt; # … with 2,990 more rows</span></code></pre></div>
 <p>Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use <code>count</code> to count the number of cells in each cluster.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
@@ -1175,9 +1175,9 @@
 <span class="co">#&gt;    label     n</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;int&gt;</span>
 <span class="co">#&gt;  1 1       465</span>
-<span class="co">#&gt;  2 2       749</span>
-<span class="co">#&gt;  3 3       548</span>
-<span class="co">#&gt;  4 4        33</span>
+<span class="co">#&gt;  2 2       748</span>
+<span class="co">#&gt;  3 3        33</span>
+<span class="co">#&gt;  4 4       549</span>
 <span class="co">#&gt;  5 5       367</span>
 <span class="co">#&gt;  6 6       387</span>
 <span class="co">#&gt;  7 7       284</span>
