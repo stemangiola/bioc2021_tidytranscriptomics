@@ -620,6 +620,7 @@ get_bibliography(counts_de)
 -   `tidybulk` allows streamlined multi-method analyses
 -   `tidybulk` allow easy analyses of the cell-type composition
 
+
 # Part 2 Single-cell RNA sequencing with tidySingleCellExperiment
 
 You can read more about single-cell RNA sequencing workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
