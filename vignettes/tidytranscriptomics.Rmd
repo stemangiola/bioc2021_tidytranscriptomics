@@ -261,7 +261,7 @@ counts_scaled <- counts_filtered %>% scale_abundance()
 counts_scaled
 ```
 
-After we run `scale_abundance` we should see some columns have been added at the end. The column contains the scaled counts.
+After we run `scale_abundance` we should see some columns have been added at the end. The column  `counts_scaled` contains the scaled counts.
 
 We can visualise the difference in abundance densities before and after scaling. As tidybulk output is compatible with tidyverse, we can simply pipe it into standard tidyverse functions such as `filter`, `pivot_longer` and `ggplot`. We can also take advantage of ggplot's `facet_wrap` to easily create multiple plots.
 
