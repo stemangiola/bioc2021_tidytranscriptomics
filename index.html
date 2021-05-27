@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">bioc2021tidytranscriptomics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
 <div id="workshop-package-installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#workshop-package-installation" class="anchor"></a>Workshop package installation</h2>
-<p>This is necessary in order to reproduce the code shown in the workshop. The workshop is designed for R <code>4.0</code> and can be installed using one of the two ways below.</p>
+<p>This is necessary in order to reproduce the code shown in the workshop. The workshop is designed for R <code>4.1</code> and can be installed using one of the two ways below.</p>
 <div id="via-docker-image" class="section level3">
 <h3 class="hasAnchor">
 <a href="#via-docker-image" class="anchor"></a>Via Docker image</h3>
@@ -112,7 +112,7 @@
 <div id="via-github" class="section level3">
 <h3 class="hasAnchor">
 <a href="#via-github" class="anchor"></a>Via GitHub</h3>
-<p>Alternatively, you could install the workshop using the commands below in R <code>4.0</code>.</p>
+<p>Alternatively, you could install the workshop using the commands below in R <code>4.1</code>.</p>
 <pre><code><a href="https://rdrr.io/r/base/Sys.setenv.html">#install.packages('remotes')
 
 # Need to set this to prevent installation erroring due to even tiny warnings, similar to here: https://github.com/r-lib/remotes/issues/403#issuecomment-748181946
@@ -130,13 +130,11 @@ browseVignettes("bioc2021tidytranscriptomics")</a></code></pre>
 <div id="workshop-description" class="section level2">
 <h2 class="hasAnchor">
 <a href="#workshop-description" class="anchor"></a>Workshop Description</h2>
-<p>This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions.</p>
-<p>This can be achieved for RNA sequencing data with the <a href="https://stemangiola.github.io/tidySummarizedExperiment/">tidySummarizedExperiment</a>, <a href="https://stemangiola.github.io/tidybulk/">tidybulk</a>, <a href="https://stemangiola.github.io/tidyseurat/">tidyseurat</a>, <a href="https://stemangiola.github.io/tidySingleCellExperiment/">tidySingleCellExperiment</a>, <a href="https://stemangiola.github.io/tidyHeatmap/">tidyHeatmap</a> and <a href="https://www.tidyverse.org/">tidyverse</a> packages. The tidybulk package provides a tidy data structure and a modular framework for bulk transcriptional analyses, the tidyseurat and tidySingleCellExperiment packages provide similar for single-cell, and tidyHeatmap provides a tidy implementation of ComplexHeatmap. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data.</p>
+<p>Recently, <a href="https://bioconductor.org/packages/release/bioc/html/plyranges.html">plyranges</a> and <a href="https://www.bioconductor.org/packages/release/bioc/html/tidybulk.html">tidybulk</a> have made efforts toward the harmonization of biological data structures and workflows using the concept of data tidiness, to facilitate modularisation. In this workshop, we present <a href="https://stemangiola.github.io/tidySingleCellExperiment/">tidySingleCellExperiment</a> and <a href="https://stemangiola.github.io/tidySummarizedExperiment/">tidySummarizedExperiment</a>, two R packages that allow the user to visualise and manipulate SingleCellExperiment and SummarizedExperiment objects in a tidy fashion. Importantly, the tidybulk framework now works natively with SummarizedExperiment objects and, thanks to tidySummarizedExperiment, allows tidy and modular RNA sequencing analyses without renouncing the efficiency of Bioconductor data containers. These tools are part of the <a href="https://github.com/stemangiola/tidytranscriptomics">tidytranscriptomics</a> R software suite, and represent an effort toward the harmonisation of transcriptional analyses under the tidy umbrella.</p>
 <div id="pre-requisites" class="section level3">
 <h3 class="hasAnchor">
 <a href="#pre-requisites" class="anchor"></a>Pre-requisites</h3>
 <ul>
-<li>Basic knowledge of RStudio</li>
 <li>Some familiarity with tidyverse syntax</li>
 <li>Some familiarity with bulk RNA-seq and single cell RNA-seq</li>
 </ul>
@@ -151,10 +149,9 @@ browseVignettes("bioc2021tidytranscriptomics")</a></code></pre>
 <h3 class="hasAnchor">
 <a href="#r--bioconductor-packages-used" class="anchor"></a><em>R</em> / <em>Bioconductor</em> packages used</h3>
 <ul>
-<li>tidyverse</li>
-<li>tidybulk</li>
 <li>tidySummarizedExperiment</li>
 <li>tidySingleCellExperiment</li>
+<li>tidybulk</li>
 <li>tidyHeatmap</li>
 <li>limma</li>
 <li>edgeR</li>
@@ -191,27 +188,19 @@ browseVignettes("bioc2021tidytranscriptomics")</a></code></pre>
 </tr>
 </tbody>
 </table>
-</div>
-<div id="workshop-goals-and-objectives" class="section level3">
-<h3 class="hasAnchor">
-<a href="#workshop-goals-and-objectives" class="anchor"></a>Workshop goals and objectives</h3>
-<p>In exploring and analysing RNA sequencing data, there are a number of key concepts, such as filtering, scaling, dimensionality reduction, hypothesis testing, clustering and visualisation, that need to be understood. These concepts can be intuitively explained to new users, however, (i) the use of a heterogeneous vocabulary and jargon by methodologies/algorithms/packages, (ii) the complexity of data wrangling, and (iii) the coding burden, impede effective learning of the statistics and biology underlying an informed RNA sequencing analysis.</p>
-<p>The tidytranscriptomics approach to RNA sequencing data analysis abstracts out the coding-related complexity and provides tools that use an intuitive and jargon-free vocabulary, enabling focus on the statistical and biological challenges.</p>
 <div id="learning-goals" class="section level4">
 <h4 class="hasAnchor">
 <a href="#learning-goals" class="anchor"></a>Learning goals</h4>
 <ul>
-<li>To understand the key concepts and steps of RNA sequencing data analysis</li>
-<li>To approach data representation and analysis though a tidy data paradigm, integrating tidyverse with tidybulk, tidySingleCellExperiment and tidyHeatmap.</li>
+<li>To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment and tidySummarizedExperiment.</li>
 </ul>
 </div>
 <div id="learning-objectives" class="section level4">
 <h4 class="hasAnchor">
 <a href="#learning-objectives" class="anchor"></a>Learning objectives</h4>
 <ul>
-<li>Recall the key concepts of RNA sequencing data analysis</li>
-<li>Apply the concepts to publicly available data</li>
-<li>Create plots that summarise the information content of the data and analysis results</li>
+<li>Explore and visualise bulk RNA-seq count data with tidySummarizedExperiment</li>
+<li>Explore and visualise single cell RNA-seq count data with tidySingleCellExperiment</li>
 </ul>
 </div>
 </div>
