@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Talk introduction
+# Workshop introduction
 
-This talk will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset. Each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/), [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) and [tidyseurat](https://stemangiola.github.io/tidyseurat/) packages can achieve this consistency for RNA sequencing data. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
+This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset. Each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/), [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) and [tidyseurat](https://stemangiola.github.io/tidyseurat/) packages can achieve this consistency for RNA sequencing data. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/roadmap.png")
@@ -34,7 +34,7 @@ knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 
 **Acknowledgements**
 
-Some of the material in Part 1 was adapted from an R for RNA sequencing talk first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). The use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
+Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). The use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
 
 ## Introduction
 
@@ -1053,7 +1053,7 @@ pbmc_small
 
 # Contributing
 
-If you want to suggest improvements for this talk or ask questions, you can do so as described [here](https://github.com/stemangiola/monashMay5_tidytranscriptomics/blob/master/CONTRIBUTING.md).
+If you want to suggest improvements for this workshop or ask questions, you can do so as described [here](https://github.com/stemangiola/monashMay5_tidytranscriptomics/blob/master/CONTRIBUTING.md).
 
 # Reproducibility
 
