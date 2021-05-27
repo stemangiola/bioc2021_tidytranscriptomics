@@ -4,13 +4,12 @@ author:
   - Maria Doyle, Peter MacCallum Cancer Centre^[<maria.doyle at petermac.org>]
   - Stefano Mangiola, Walter and Eliza Hall Institute^[<mangiola.s at wehi.edu.au>]
 output: rmarkdown::html_vignette
-bibliography: "`r file.path(system.file(package='bioc2021tidytranscriptomics', 'vignettes'), 'tidytranscriptomics.bib')`"
+bibliography: "`r file.path(system.file(package='bioc2021tidytranscriptomic', 'vignettes'), 'tidytranscriptomics.bib')`"
 vignette: >
   %\VignetteIndexEntry{Introduction to Tidy Transcriptomics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -21,22 +20,21 @@ knitr::opts_chunk$set(
 
 # Workshop introduction
 
-[tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
-
+This workshop will present how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset. Each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/), [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) and [tidyseurat](https://stemangiola.github.io/tidyseurat/) packages can achieve this consistency for RNA sequencing data. These packages are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
-# Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk
+# Part 1 Bulk RNA sequencing with tidySummarizedExperiment and tidybulk
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 ```
 
-### Acknowledgements
+**Acknowledgements**
 
-Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). Use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
+Some of the material in Part 1 was adapted from an R for RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). The use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
 
 ## Introduction
 
@@ -86,21 +84,16 @@ custom_theme <-
       theme(
         panel.border = element_blank(),
         axis.line = element_line(),
-        panel.grid.major = element_line(size = 0.2),
-        panel.grid.minor = element_line(size = 0.1),
         text = element_text(size = 12),
         legend.position = "bottom",
-        strip.background = element_blank(),
-        axis.title.x = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1)
+        strip.background = element_blank()
       )
   )
 ```
 
-### tidySummarizedExperiment
+## tidySummarizedExperiment
 
-Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated. 
+Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna], and it includes 8 samples from human airway smooth muscle cells from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control), a sample has undergone RNA sequencing, and gene counts have been generated.
 
 ```{r}
 # load airway RNA sequencing data
@@ -110,11 +103,11 @@ data(airway)
 airway
 ```
 
-The data in the airway package is a Bioconductor *SummarizedExperiment* object. For more information see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html). 
+The data in the airway package is a Bioconductor *SummarizedExperiment* object. For more information, see [here](https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html).
 
-The `tidySummarizedExperiment` package enables any *SummarizedExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SummarizedExperiment* behaviour.
+The package `tidySummarizedExperiment` enables any *SummarizedExperiment* object to be displayed and manipulated according to tidy data principles without affecting any *SummarizedExperiment* behaviour.
 
-If we load the *tidySummarizedExperiment* package and then view the airway data it now displays as a tibble. A tibble is the tidyverse table format.
+If we load the *tidySummarizedExperiment* package and then view the airway data, it now displays as a tibble. A tibble is the tidyverse table format.
 
 ```{r message=FALSE, warning=FALSE}
 # load tidySummarizedExperiment package
@@ -124,7 +117,7 @@ library(tidySummarizedExperiment)
 airway
 ```
 
-Now we can more easily see the data. The airway object contains information about genes and samples, the first column has the Ensembl gene identifier, the second column has the sample identifier and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample information. The dex column tells us whether the samples are treated or untreated and the cell column tells us what cell line they are from.  
+Now we can more easily see the data. The airway object contains information about genes and samples. The first column has the Ensembl gene identifier, the second column has the sample identifier, and the third column has the gene transcription abundance. The abundance is the number of reads aligning to the gene in each experimental sample. The remaining columns include sample information. The dex column tells us whether the samples are treated or untreated, and the cell column tells us what cell line they are from.
 
 We can still interact with the tidy SummarizedExperiment object using commands for SummarizedExperiment objects.
 
@@ -134,7 +127,7 @@ assays(airway)
 
 ### Tidyverse commands
 
-And now we can also use tidyverse commands, such as `filter`, `select` and `mutate` to explore the tidy SummarizedExperiment object. Some examples are shown below and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
+And now we can also use tidyverse commands, such as `filter`, `select` and `mutate` to explore the tidy SummarizedExperiment object. Some examples are shown below, and more can be seen at the tidySummarizedExperiment website [here](https://stemangiola.github.io/tidySummarizedExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential, but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe, see [here](https://r4ds.had.co.nz/pipes.html).
 
 We can use `filter` to choose rows, for example, to see just the rows for the treated samples.
 
@@ -148,7 +141,7 @@ We can use `select` to choose columns, for example, to see the sample, cell line
 airway %>% select(sample, cell, dex)
 ```
 
-We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
+We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix present in all samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
 
 ```{r}
 airway %>%
@@ -157,9 +150,9 @@ airway %>%
   select(sample, sample_name)
 ```
 
-## Setting up the data
+### Setting up the data
 
-We'll set up the airway data for our RNA-seq analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
+We'll set up the airway data for our RNA sequencing analysis. We'll create a column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
 # setup data workflow
@@ -176,11 +169,75 @@ counts <-
 counts
 ```
 
-## Filtering lowly transcribed genes  
+## tidybulk
 
-Genes with very low counts across all libraries provide little evidence for differential expression and they can interfere with some of the statistical approximations that are used later in the pipeline. They also add to the multiple testing burden when estimating false discovery rates, reducing power to detect differentially expressed genes. These genes should be filtered out prior to further analysis.
++-----------------------------------+------------------------------------------------------------------------------+
+| Function                          | Description                                                                  |
++===================================+==============================================================================+
+| `identify_abundant`               | identify the abundant genes                                                  |
++-----------------------------------+------------------------------------------------------------------------------+
+| `aggregate_duplicates`            | Aggregate abundance and annotation of duplicated transcripts in a robust way |
++-----------------------------------+------------------------------------------------------------------------------+
+| `scale_abundance`                 | Scale (normalise) abundance for RNA sequencing depth                         |
++-----------------------------------+------------------------------------------------------------------------------+
+| `reduce_dimensions`               | Perform dimensionality reduction (PCA, MDS, tSNE)                            |
++-----------------------------------+------------------------------------------------------------------------------+
+| `cluster_elements`                | Labels elements with cluster identity (kmeans, SNN)                          |
++-----------------------------------+------------------------------------------------------------------------------+
+| `remove_redundancy`               | Filter out elements with highly correlated features                          |
++-----------------------------------+------------------------------------------------------------------------------+
+| `adjust_abundance`                | Remove known unwanted variation (Combat)                                     |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_differential_abundance`     | Differential transcript abundance testing (DE)                               |
++-----------------------------------+------------------------------------------------------------------------------+
+| `deconvolve_cellularity`          | Estimated tissue composition (Cibersort or llsr)                             |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_differential_cellularity`   | Differential cell-type abundance testing                                     |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_stratification_cellularity` | Estimate Kaplan-Meier survival differences                                   |
++-----------------------------------+------------------------------------------------------------------------------+
+| `keep_variable`                   | Filter for top variable features                                             |
++-----------------------------------+------------------------------------------------------------------------------+
+| `keep_abundant`                   | Filter out lowly abundant transcripts                                        |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_gene_enrichment`            | Gene enrichment analyses (EGSEA)                                             |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_gene_overrepresentation`    | Gene enrichment on list of transcript names (no rank)                        |
++-----------------------------------+------------------------------------------------------------------------------+
+| `test_gene_rank`                  | Gene enrichment on ranked list of transcript names (GSEA)                    |
++-----------------------------------+------------------------------------------------------------------------------+
 
-We can perform the filtering using tidybulk `keep_abundant` or `identify_abundant`. These functions can use the *edgeR* `filterByExpr` function described in [@law2016rna] to automatically identify the genes with adequate abundance for differential expression testing. By default, this will keep genes with ~10 counts in a minimum number of samples, the number of the samples in the smallest group. In this dataset the smallest group size is four (as we have four dex-treated samples versus four untreated). Alternatively, we could use `identify_abundant` to identify which genes are abundant or not (TRUE/FALSE), rather than just keeping the abundant ones. 
++----------------------------+-----------------------------------------------------------------+
+| Utilities                  | Description                                                     |
++============================+=================================================================+
+| `get_bibliography`         | Get the bibliography of your workflow                           |
++----------------------------+-----------------------------------------------------------------+
+| `tidybulk`                 | add tidybulk attributes to a tibble object                      |
++----------------------------+-----------------------------------------------------------------+
+| `tidybulk_SAM_BAM`         | Convert SAM BAM files into tidybulk tibble                      |
++----------------------------+-----------------------------------------------------------------+
+| `pivot_sample`             | Select sample-wise columns/information                          |
++----------------------------+-----------------------------------------------------------------+
+| `pivot_transcript`         | Select transcript-wise columns/information                      |
++----------------------------+-----------------------------------------------------------------+
+| `rotate_dimensions`        | Rotate two dimensions of a degree                               |
++----------------------------+-----------------------------------------------------------------+
+| `ensembl_to_symbol`        | Add gene symbol from ensembl IDs                                |
++----------------------------+-----------------------------------------------------------------+
+| `symbol_to_entrez`         | Add entrez ID from gene symbol                                  |
++----------------------------+-----------------------------------------------------------------+
+| `describe_transcript`      | Add gene description from gene symbol                           |
++----------------------------+-----------------------------------------------------------------+
+| `impute_missing_abundance` | Impute abundance for missing data points using sample groupings |
++----------------------------+-----------------------------------------------------------------+
+| `fill_missing_abundance`   | Fill abundance for missing data points using an arbitrary value |
++----------------------------+-----------------------------------------------------------------+
+
+### Filtering lowly transcribed genes
+
+Genes with very low counts across all libraries provide little evidence for differential expression, and they can interfere with some of the statistical approximations that are used later in the pipeline. They also add to the multiple testing burden when estimating false discovery rates, reducing power to detect differentially expressed genes. These genes should be filtered out prior to further analysis.
+
+We can perform the filtering using tidybulk `keep_abundant` or `identify_abundant`. These functions can use the *edgeR* `filterByExpr` function described in [@law2016rna] to automatically identify the genes with adequate abundance for differential expression testing. By default, this will keep genes with \~10 counts in a minimum number of samples, the number of the samples in the smallest group. In this dataset the smallest group size is four (as we have four dex-treated samples versus four untreated). Alternatively, we could use `identify_abundant` to identify which genes are abundant or not (TRUE/FALSE), rather than just keeping the abundant ones.
 
 ```{r}
 # Filtering counts
@@ -189,11 +246,12 @@ counts_filtered <- counts %>% keep_abundant(factor_of_interest = dex)
 # take a look
 counts_filtered
 ```
-After running `keep_abundant` we have a column called `.abundant` containing TRUE  (`identify_abundant` would have TRUE/FALSE).
 
-## Scaling counts to normalise
+After running `keep_abundant` we have a column called `.abundant` containing TRUE (`identify_abundant` would have TRUE/FALSE).
 
-Scaling of counts, normalisation, is performed to eliminate uninteresting differences between samples due to sequencing depth or composition. A more detailed explanation can be found [here](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html). In the tidybulk package the function `scale_abundance` generates scaled counts, with scaling factors calculated on abundant (filtered) transcripts and applied to all transcripts. We can choose from different normalisation methods. Here we will use the default, edgeR's trimmed mean of M values (TMM), [@robinson2010scaling]. TMM normalisation (and most scaling normalisation methods) scale relative to one sample.
+### Scaling counts to normalise
+
+Scaling of counts, normalisation, is performed to eliminate uninteresting differences between samples due to sequencing depth or composition. A more detailed explanation can be found [here](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html). In the tidybulk package, the function `scale_abundance` generates scaled counts, with scaling factors calculated on abundant (filtered) transcripts and applied to all transcripts. We can choose from different normalisation methods. Here we will use the default, edgeR's trimmed mean of M values (TMM), [@robinson2010scaling]. TMM normalisation (and most scaling normalisation methods) scale relative to one sample.
 
 ```{r}
 # Scaling counts
@@ -203,9 +261,9 @@ counts_scaled <- counts_filtered %>% scale_abundance()
 counts_scaled
 ```
 
-After we run `scale_abundance` we should see some columns have been added at the end. The `counts_scaled` column contains the scaled counts.
+After we run `scale_abundance` we should see some columns have been added at the end. The column  `counts_scaled` contains the scaled counts.
 
-We can visualise the difference of abundance densities before and after scaling. As tidybulk output is compatible with tidyverse, we can simply pipe it into standard tidyverse functions such as `filter`, `pivot_longer` and `ggplot`. We can also take advantage of ggplot's `facet_wrap` to easily create multiple plots.
+We can visualise the difference in abundance densities before and after scaling. As tidybulk output is compatible with tidyverse, we can simply pipe it into standard tidyverse functions such as `filter`, `pivot_longer` and `ggplot`. We can also take advantage of ggplot's `facet_wrap` to easily create multiple plots.
 
 ```{r out.width = "70%"}
 counts_scaled %>%
@@ -221,7 +279,7 @@ counts_scaled %>%
   custom_theme
 ```
 
-In this dataset the distributions of the counts are not very different to each other before scaling but scaling does make the distributions more similar. If we saw a sample with a very different distribution we may need to investigate it.
+In this dataset, the distributions of the counts are not very different to each other before scaling but scaling does make the distributions more similar. If we saw a sample with a very different distribution, we may need to investigate it.
 
 As tidybulk smoothly integrates with ggplot2 and other tidyverse packages it can save on typing and make plots easier to generate. Compare the code for creating density plots with tidybulk versus standard base R below (standard code adapted from [@law2016rna]).
 
@@ -239,7 +297,6 @@ airway %>%
   scale_x_log10() +
   custom_theme
 ```
-
 
 **base R using edgeR**
 
@@ -280,13 +337,9 @@ for (i in 2:nsamples) {
 legend("topright", legend = dgList_norm$samples$Run, text.col = col, bty = "n")
 ```
 
-
-## Exploratory analyses
-
 ### Dimensionality reduction
 
-By far, one of the most important plots we make when we analyse RNA sequencing data are principal-component analysis (PCA) or multi-dimensional scaling (MDS) plots. We reduce the dimensions of the data to identify the greatest sources of variation in the data. A principal components analysis is an example of an unsupervised analysis, where we don't need to specify the groups. If your experiment is well controlled and has worked well, what we hope to see is that the greatest sources of variation in the data are the treatments/groups we are interested in. It is also an incredibly useful tool for quality control and checking for outliers. We can use the `reduce_dimensions` function to calculate the dimensions.
-
+By far, one of the most important plots we make when we analyse RNA sequencing data are principal-component analysis (PCA) or multi-dimensional scaling (MDS) plots. We reduce the dimensions of the data to identify the greatest sources of variation in the data. A principal components analysis is an example of an unsupervised analysis, where we don't need to specify the groups. If your experiment is well controlled and has worked well, we hope to see that the greatest sources of variation in the data are the treatments/groups we are interested in. It is also a handy tool for quality control and checking for outliers. We can use the `reduce_dimensions` function to calculate the dimensions.
 
 ```{r}
 # Get principal components
@@ -301,6 +354,7 @@ This joins the result to the counts object.
 # Take a look
 counts_scal_PCA
 ```
+
 For plotting, we can select just the sample-wise information with `pivot_sample`.
 
 ```{r}
@@ -321,7 +375,6 @@ counts_scal_PCA %>%
 ```
 
 The samples separate by treatment on PC1 which is what we hope to see. PC2 separates the N080611 cell line from the other samples, indicating a greater difference between that cell line and the others.
-
 
 ### Hierarchical clustering with heatmaps
 
@@ -350,6 +403,7 @@ In the heatmap we can see the samples cluster into two groups, treated and untre
 Tidybulk enables a simplified way of generating a clustered heatmap of variable genes. Compare the code below for tidybulk versus a base R method.
 
 **base R using edgeR**
+
 ```{r eval=FALSE}
 # Example code, no need to run
 
@@ -368,12 +422,11 @@ col.group <- c("red", "grey")[group]
 gplots::heatmap.2(highly_variable_lcpm, col = colours, trace = "none", ColSideColors = col.group, scale = "row")
 ```
 
+### Differential expression
 
-## Differential expression
+*tidybulk* integrates several popular methods for differential transcript abundance testing: the edgeR quasi-likelihood [@chen2016reads] (tidybulk default method), edgeR likelihood ratio [@mccarthy2012differential], limma-voom [@law2014voom] and DESeq2 [@love2014moderated]. A common question researchers have is which method to choose. With tidybulk, we can easily run multiple methods and compare.
 
-*tidybulk* integrates several popular methods for differential transcript abundance testing: the edgeR quasi-likelihood [@chen2016reads] (tidybulk default method), edgeR likelihood ratio [@mccarthy2012differential], limma-voom [@law2014voom] and DESeq2 [@love2014moderated]. A common question researchers have is which method to choose. With tidybulk we can easily run multiple methods and compare.
-
-We give `test_differential_abundance` our tidybulk counts object and a formula, specifying the column that contains our groups to be compared. If all our samples were from the same cell line, and there were no additional factors contributing variance such as batch differences, we could use the formula `~ dex`. However, each treated and untreated sample is from a different cell line so we add the cell line as an additional factor `~ dex + cell`. 
+We give `test_differential_abundance` our tidybulk counts object and a formula, specifying the column that contains our groups to be compared. If all our samples were from the same cell line, and there were no additional factors contributing variance such as batch differences, we could use the formula `~ dex`. However, each treated and untreated sample is from a different cell line so we add the cell line as an additional factor `~ dex + cell`.
 
 ```{r message=FALSE}
 de_all <-
@@ -415,7 +468,7 @@ de_all
 
 This outputs the columns from each method such as log-fold change (logFC), false-discovery rate (FDR) and probability value (p-value). logFC is log2(treated/untreated).
 
-### Comparison of methods
+#### Comparison of methods
 
 We can visually compare the significance for all methods. We will notice that there is some difference between the methods.
 
@@ -426,7 +479,7 @@ de_all %>%
   ggpairs(1:4)
 ```
 
-### Single method
+#### Single method
 
 If we just wanted to run one differential testing method we could do that. The default method is edgeR quasi-likelihood.
 
@@ -438,6 +491,7 @@ counts_de <- counts_scal_PCA %>%
 Tidybulk enables a simplified way of performing an RNA sequencing differential expression analysis (with the benefit of smoothly integrating with ggplot2 and other tidyverse packages). Compare the code for a tidybulk edgeR analysis versus standard edgeR below.
 
 **standard edgeR**
+
 ```{r eval=FALSE}
 # Example code, no need to run
 
@@ -454,10 +508,9 @@ fit <- glmQLFit(dgList, design)
 qlf <- glmQLFTest(fit, coef=2)
 ```
 
-## Volcano plots
+#### Volcano plots
 
-Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes e.g. genes with false-discovery rate < 0.05. In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes is very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives. 
-
+Volcano plots are a useful genome-wide plot for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes e.g. genes with false-discovery rate \< 0.05. In order to decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P-value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes are very high when you do that many tests. Hence we need to control the false discovery rate, which is the adjusted p-value column in the results table. What this means is that if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives.
 
 ```{r out.width = "70%"}
 # volcano plot, minimal
@@ -468,7 +521,9 @@ counts_de %>%
   custom_theme
 ```
 
-We'll extract the symbols for a few top genes (by P value) to use in a more informative volcano plot, integrating some of the packages in tidyverse.
+A more informative plot, integrating some of the packages in tidyverse.
+
+We'll extract the symbols for a few top genes (by P value) to use in some of the plots we will make.
 
 ```{r}
 topgenes_symbols <-
@@ -477,8 +532,6 @@ topgenes_symbols <-
   arrange(PValue) %>%
   head(6) %>%
   pull(symbol)
-
-topgenes_symbols
 ```
 
 ```{r out.width = "70%", warning=FALSE}
@@ -501,27 +554,18 @@ counts_de %>%
   scale_size_discrete(range = c(0, 2))
 ```
 
-## Automatic bibliography
-
-Tidybulk provides a handy function called `get_bibliography` that keeps track of the references for the methods used in your tidybulk workflow. The references are in BibTeX format and can be imported into your reference manager.
-
-```{r}
-get_bibliography(counts_de)
-```
-
-
-## Cell type composition analysis
+### Cell type composition analysis
 
 If we are sequencing tissue samples, we may want to know what cell types are present and if there are differences in expression between them. `tidybulk` has a `deconvolve_cellularity` function that can help us do this.
 
-For this example we will use a subset of the breast cancer dataset from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/tcga). 
+For this example, we will use a subset of the breast cancer dataset from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/tcga).
 
 ```{r}
 BRCA <- bioc2021tidytranscriptomics::BRCA 
 BRCA
 ```
 
-With tidybulk, we can easily infer the proportions of cell types within a tissue using one of several published methods (Cibersort [@newman2015robust], EPIC [@racle2017simultaneous] and llsr [@abbas2009deconvolution]). Here we will use Cibersort which provides a default signature called LM22 to define the cell types. LM22 contains 547 genes that identify 22 human immune cell types.
+With tidybulk, we can easily infer the proportions of cell types within a tissue using one of several published methods (Cibersort [@newman2015robust], EPIC [@racle2017simultaneous] and llsr [@abbas2009deconvolution]). Here we will use Cibersort, which provides a default signature called LM22 to define the cell types. LM22 contains 547 genes that identify 22 human immune cell types.
 
 ```{r}
 BRCA_cell_type <-
@@ -531,7 +575,7 @@ BRCA_cell_type <-
 BRCA_cell_type
 ```
 
-Cell type proportions are added to the tibble as new columns. The prefix makes it easy to reshape the data frame if needed, for visualisation or further analyses.
+Cell type proportions are added to the tibble as new columns. The prefix makes it easy to reshape the data frame, if needed, for visualisation or further analyses.
 
 ```{r}
 BRCA_cell_type_long <-
@@ -560,21 +604,28 @@ BRCA_cell_type_long %>%
   custom_theme
 ```
 
+### Automatic bibliography
+
+Tidybulk provides a handy function called `get_bibliography` that keeps track of the references for the methods used in your tidybulk workflow. The references are in BibTeX format and can be imported into your reference manager.
+
+```{r}
+get_bibliography(counts_de)
+```
 
 ## Key Points
 
-- Bulk RNA sequencing data can be represented and analysed in a 'tidy' way using tidySummarizedExperiment, tidybulk and the tidyverse.
-- tidySummarizedExperiment enables us to visualise and manipulate a Bioconductor SummarizedExperiment object as if it were in tidy data format.
-- Some of the key steps in an RNA sequencing analysis are filtering lowly abundant transcripts, adjusting for differences in sequencing depth and composition, testing for differential expression, and visualising the data, which can all be performed in a tidy way with tidybulk.
-- `tidybulk` allows streamlined multi-method analyses
-- `tidybulk` allow easy analyses of cell type composition
+-   Bulk RNA sequencing data can be represented and analysed in a 'tidy' way using tidySummarizedExperiment, tidybulk and the tidyverse.
+-   tidySummarizedExperiment enables us to visualise and manipulate a Bioconductor SummarizedExperiment object as if it were in tidy data format.
+-   Some of the key steps in an RNA sequencing analysis are filtering lowly abundant transcripts, adjusting for differences in sequencing depth and composition, testing for differential expression, and visualising the data, which can all be performed in a tidy way with tidybulk.
+-   `tidybulk` allows streamlined multi-method analyses
+-   `tidybulk` allow easy analyses of the cell-type composition
 
 
-# Part 2 Single-cell RNA-seq with tidySingleCellExperiment
+# Part 2 Single-cell RNA sequencing with tidySingleCellExperiment
 
-A typical scRNA-seq workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step but you can read more about scRNA-seq workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
+You can read more about single-cell RNA sequencing workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
 
-In Part 1 we showed how we can study the cell-type composition of a biological sample using bulk RNA sequencing.  Single cell sequencing enables a more direct estimation of cell-type composition and gives greater resolution. For bulk RNA sequencing we need to infer the cell types using the abundance of transcripts in the whole sample, with single-cell RNA sequencing we can directly measure the transcripts in each cell and then classify the cells into cell types. 
+In Part 1, we showed how we can study the cell-type composition of a biological sample using bulk RNA sequencing. Single-cell sequencing enables a more direct estimation of cell-type composition and gives a greater resolution. For bulk RNA sequencing, we need to infer the cell types using the abundance of transcripts in the whole sample. With single-cell RNA sequencing, we can directly measure the transcripts in each cell and then classify the cells into cell types.
 
 ```{r message=FALSE, warning=FALSE}
 # load packages
@@ -589,23 +640,34 @@ library(scuttle)
 library(EnsDb.Hsapiens.v86)
 library(celldex)
 library(ggbeeswarm)
-library(tidySingleCellExperiment)
 ```
 
 ## Introduction to tidySingleCellExperiment
 
-The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (pbmc) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in [SingleCellExperiment](https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) format. SingleCellExperiment is a very popular container of single cell RNA sequencing data.
+The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (PBMC) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in [SingleCellExperiment](https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) format. SingleCellExperiment is a very popular container of single-cell RNA sequencing data.
 
 Similar to what we saw with tidySummarizedExperiment, `tidySingleCellExperiment` package enables any *SingleCellExperiment* object to be displayed and manipulated according to tidy data principles, without affecting any *SingleCellExperiment* behaviour.
 
-If we load the *tidySingleCellExperiment* package and then view the pbmc data it displays as a tibble.
-
 ```{r}
+library(tidySingleCellExperiment)
+
 # load pbmc single cell RNA sequencing data
 pbmc <- bioc2021tidytranscriptomics::pbmc
 
 # take a look
 pbmc
+```
+
+### Join transcript information
+
+```{r}
+
+pbmc %>%
+  join_features(c("CD3G", "CD8A"), shape="wide") %>%
+  
+  # Select columns for display
+  select(cell, CD3G, CD8A, everything())
+
 ```
 
 It can be interacted with using [SingleCellExperiment commands](https://bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) such as `assayNames`.
@@ -614,7 +676,7 @@ It can be interacted with using [SingleCellExperiment commands](https://biocondu
 assayNames(pbmc)
 ```
 
-We can also interact with our object as we do with any tidyverse tibble. 
+We can also interact with our object as we do with any tidyverse tibble.
 
 ## Setting up the data
 
@@ -642,11 +704,11 @@ pbmc %>% select(sample, dataset, groups)
 
 ## Quality control
 
-A key quality control step performed in single cell analysis is assessment of the proportion of mitochondrial transcripts. A high mitochondrial count can indicate the cell is dead or dying and is thus poor quality and should be filtered out. 
+A key quality control step performed in single-cell analyses is the assessment of the proportion of mitochondrial transcripts. A high mitochondrial count can indicate the cell is dead or dying and is thus poor quality and should be filtered out.
 
 ### Nesting
 
-A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources, we can nest by dataset and analyse the mitochondrial content for each.
+A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources. We can nest by dataset and analyse the mitochondrial content for each.
 
 To demonstrate the power of nesting we'll first show the mitochondrial analysis for one of the 10 datasets.
 
@@ -654,7 +716,7 @@ To demonstrate the power of nesting we'll first show the mitochondrial analysis 
 one_dataset <- pbmc %>% filter(dataset =="GSE115189")
 ```
 
-We get the chromosomal location for each gene in the dataset so we can identify the mitochondrial genes. We'll get a warning that some of the ids don't find a match but it should be just a small proportion. 
+We get the chromosomal location for each gene in the dataset so we can identify the mitochondrial genes. We'll get a warning that some of the ids don't find a match, but it should be just a small proportion.
 
 ```{r}
 location <- mapIds(
@@ -675,7 +737,7 @@ mito_info_one_dataset
 
 We then label the cells with high mitochondrial content as outliers.
 
-```{r}  
+```{r}
 mito_info_one_dataset <- mito_info_one_dataset %>%     
       # Converting to tibble
       as_tibble(rownames = "cell") %>%
@@ -694,7 +756,7 @@ mito_info_one_dataset <- left_join(one_dataset, mito_info_one_dataset, by = "cel
 mito_info_one_dataset
 ```
 
-The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
+The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets, we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/nesting.png")
@@ -750,7 +812,7 @@ mito_info_all_datasets
 ```
 
 Remove the nesting to get back one table containing all datasets.
- 
+
 ```{r}
 pbmc <- mito_info_all_datasets %>%
   unnest(data)
@@ -760,7 +822,7 @@ pbmc
 
 Nesting has allowed us to perform the QC on each dataset in an efficient way.
 
-We can use tidyverse to reshape the data and create [beeswarm plots](http://www.cbs.dtu.dk/~eklund/beeswarm/) to visualise the mitochondrial content. 
+We can use tidyverse to reshape the data and create [beeswarm plots](http://www.cbs.dtu.dk/~eklund/beeswarm/) to visualise the mitochondrial content.
 
 ```{r, warning=FALSE}
 pbmc %>%
@@ -785,7 +847,7 @@ pbmc %>%
   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1))
 ```
 
-In the faceted plot, detected is number of genes in each of the 10 datasets, sum is total counts.
+In the faceted plot, detected is the number of genes in each of the 10 datasets, the sum is total counts.
 
 We then proceed to filter out cells with high mitochondrial content.
 
@@ -814,9 +876,9 @@ pbmc <-
   fastMNN() 
 ```
 
-## Identify clusters 
+## Identify clusters
 
-We proceed with identifying cell clusters. 
+We proceed with identifying cell clusters.
 
 ```{r cluster}
 # Assign clusters to the 'colLabels'
@@ -867,11 +929,9 @@ pbmc %>%
 knitr::include_graphics("../inst/vignettes/plotly_2.png")
 ```
 
-## Cell type classification
+## Join datasets
 
-### Manual cell type classification
-
-We can identify cluster markers (genes). As example, we are selecting the top 10 for each cluster. We can then plot a heatmap of those gene markers across cells.
+We can join datasets as if theywere tibbles
 
 ```{r}
 # Identify top 10 markers per cluster
@@ -940,7 +1000,7 @@ pbmc %>% count(label, first.labels)
 
 ## Pseudobulk analyses
 
-It is sometime useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis see [here](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html).
+It is sometimes useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis, see [here](https://hbctraining.github.io/scRNA%20sequencing/lessons/pseudobulk_DESeq2_scrnaseq.html).
 
 ### Data exploration using pseudobulk samples
 
@@ -964,16 +1024,40 @@ pbmc_bulk %>%
   tidybulk::scale_abundance()
 ```
 
-## Key Points
-- Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell type classification
-- `tidySingleCellExperiment` is an invisible layer that operates on a `SingleCellExperiment` object and enables us to visualise and manipulate data as if it were a tidy data frame.
-- `tidySingleCellExperiment` object is a `SingleCellExperiment object` so it can be used with any `SingleCellExperiment` compatible method
+## tidyseurat
 
+```{r}
+library(SeuratObject)
+
+data(pbmc_small)
+
+pbmc_small
+```
+
+With `tidyseurat` we obtain the consistent tidy abstraction, effectively unifying Bioconductor- and Seurat-based containers for display and manipulation.
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyseurat)
+```
+
+```{r}
+pbmc_small
+```
+
+## Key Points
+
+-   Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell-type classification
+-   `tidySingleCellExperiment` is an invisible layer that operates on a `SingleCellExperiment` object and enables us to visualise and manipulate data as if it were a tidy data frame.
+-   `tidySingleCellExperiment` object is a `SingleCellExperiment object` so it can be used with any `SingleCellExperiment` compatible method
+- `tidyseurat` behaves consistently with `tidySingleCellExperiment`
 
 # Contributing
+
 If you want to suggest improvements for this workshop or ask questions, you can do so as described [here](https://github.com/stemangiola/bioc2021_tidytranscriptomics/blob/master/CONTRIBUTING.md).
 
 # Reproducibility
+
 Record package and version information with `sessionInfo`
 
 ```{r}
