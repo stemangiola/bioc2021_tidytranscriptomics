@@ -668,30 +668,30 @@ location <- mapIds(
 Next we calculate the mitchondrial content for each cell in the dataset.
 
 ```{r}
-mito_info_one_dataset <- perCellQCMetrics(one_dataset, subsets = list(Mito = which(location == "MT")))
-
-mito_info_one_dataset
+#mito_info_one_dataset <- perCellQCMetrics(one_dataset, subsets = list(Mito = which(location == "MT")))
+#Error in if (common.len == 1L) { : argument is of length zero
+#mito_info_one_dataset
 ```
 
 We then label the cells with high mitochondrial content as outliers.
 
 ```{r}  
-mito_info_one_dataset <- mito_info_one_dataset %>%     
-      # Converting to tibble
-      as_tibble(rownames = "cell") %>%
-
-      # Label cells with high mitochondrial content
-      mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
-
-mito_info_one_dataset
+# mito_info_one_dataset <- mito_info_one_dataset %>%     
+#       # Converting to tibble
+#       as_tibble(rownames = "cell") %>%
+# 
+#       # Label cells with high mitochondrial content
+#       mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
+# 
+# mito_info_one_dataset
 ```
 
 Finally, we join the mitochondrial information back to the original data so we will be able to filter out the cells with high mitochondrial content.
 
 ```{r}
-mito_info_one_dataset <- left_join(one_dataset, mito_info_one_dataset, by = "cell")
-
-mito_info_one_dataset
+# mito_info_one_dataset <- left_join(one_dataset, mito_info_one_dataset, by = "cell")
+# 
+# mito_info_one_dataset
 ```
 
 The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
@@ -710,52 +710,56 @@ pbmc_nested
 We will create a table (tibble) with the mitochondrial QC information for each dataset. Here we use `map` which is often used in combination with `nest` to perform commands on nested data.
 
 ```{r}
-location <- mapIds(
-  EnsDb.Hsapiens.v86,
-  keys = rownames(pbmc),
-  column = "SEQNAME",
-  keytype = "SYMBOL"
-)
-
-mito_info_all_datasets <- pbmc_nested %>%
-    mutate(mitochondrion_info = map(
-    data,
-    ~ # Calculate mitochondrial statistics
-      perCellQCMetrics(.x, subsets = list(Mito = which(location == "MT"))) %>%
-      
-      # Convert to tibble
-      as_tibble(rownames = "cell") %>%
-
-      # Label cells with high mitochondrial content
-      mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
-  ))
-  
-mito_info_all_datasets
+# location <- mapIds(
+#   EnsDb.Hsapiens.v86,
+#   keys = rownames(pbmc),
+#   column = "SEQNAME",
+#   keytype = "SYMBOL"
+# )
+# 
+# mito_info_all_datasets <- pbmc_nested %>%
+#     mutate(mitochondrion_info = map(
+#     data,
+#     ~ # Calculate mitochondrial statistics
+#       perCellQCMetrics(.x, subsets = list(Mito = which(location == "MT"))) %>%
+#       
+#       # Convert to tibble
+#       as_tibble(rownames = "cell") %>%
+# 
+#       # Label cells with high mitochondrial content
+#       mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
+#   ))
+#   
+# Error: Problem with `mutate()` column `mitochondrion_info`.
+# ℹ `mitochondrion_info = map(...)`.
+# x argument is of length zero
+# 
+# mito_info_all_datasets
 ```
 
 As before, we join the mitochondrial information to the original data.
 
 ```{r}
-  # Join the mitochondrial information to the original SingleCellExperiment data
- mito_info_all_datasets <- mito_info_all_datasets %>%
-    mutate(data = map2(
-    data, mitochondrion_info,
-    ~ left_join(.x, .y, by = "cell")
-  )) %>%
-  
-  # Remove the separate mitochondrial information table
-  select(-mitochondrion_info)
-
-mito_info_all_datasets
+#   # Join the mitochondrial information to the original SingleCellExperiment data
+#  mito_info_all_datasets <- mito_info_all_datasets %>%
+#     mutate(data = map2(
+#     data, mitochondrion_info,
+#     ~ left_join(.x, .y, by = "cell")
+#   )) %>%
+#   
+#   # Remove the separate mitochondrial information table
+#   select(-mitochondrion_info)
+# 
+# mito_info_all_datasets
 ```
 
 Remove the nesting to get back one table containing all datasets.
  
 ```{r}
-pbmc <- mito_info_all_datasets %>%
-  unnest(data)
-
-pbmc
+# pbmc <- mito_info_all_datasets %>%
+#   unnest(data)
+# 
+# pbmc
 ```
 
 Nesting has allowed us to perform the QC on each dataset in an efficient way.
@@ -763,26 +767,26 @@ Nesting has allowed us to perform the QC on each dataset in an efficient way.
 We can use tidyverse to reshape the data and create [beeswarm plots](http://www.cbs.dtu.dk/~eklund/beeswarm/) to visualise the mitochondrial content. 
 
 ```{r, warning=FALSE}
-pbmc %>%
-
-  # Reshaping
-  pivot_longer(c(detected, sum, subsets_Mito_percent)) %>%
-  ggplot(aes(
-    x = dataset, y = value,
-    color = high_mitochondrion,
-    alpha = high_mitochondrion,
-    size = high_mitochondrion
-  )) +
-
-  # Plotting
-  geom_quasirandom() +
-  facet_wrap(~name, scale = "free_y") +
-
-  # Customisation
-  scale_color_manual(values = c("black", "#e11f28")) +
-  scale_size_discrete(range = c(0, 2)) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1))
+# pbmc %>%
+# 
+#   # Reshaping
+#   pivot_longer(c(detected, sum, subsets_Mito_percent)) %>%
+#   ggplot(aes(
+#     x = dataset, y = value,
+#     color = high_mitochondrion,
+#     alpha = high_mitochondrion,
+#     size = high_mitochondrion
+#   )) +
+# 
+#   # Plotting
+#   geom_quasirandom() +
+#   facet_wrap(~name, scale = "free_y") +
+# 
+#   # Customisation
+#   scale_color_manual(values = c("black", "#e11f28")) +
+#   scale_size_discrete(range = c(0, 2)) +
+#   theme_bw() +
+#   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1))
 ```
 
 In the faceted plot, detected is number of genes in each of the 10 datasets, sum is total counts.
@@ -790,7 +794,7 @@ In the faceted plot, detected is number of genes in each of the 10 datasets, sum
 We then proceed to filter out cells with high mitochondrial content.
 
 ```{r}
-pbmc <- pbmc %>% filter(!high_mitochondrion)
+# pbmc <- pbmc %>% filter(!high_mitochondrion)
 ```
 
 ## Scaling and Integrating
@@ -897,45 +901,54 @@ pbmc %>%
 We can infer cell type identities (e.g. T cell) using *SingleR* [@aran2019reference] and manipulate the output using tidyverse. SingleR [accepts any log-normalised transcript abundance matrix](https://bioconductor.org/packages/devel/bioc/vignettes/SingleR/inst/doc/SingleR.html)
 
 ```{r}
-# Reference cell types
-blueprint <- BlueprintEncodeData()
-
-cell_type <-
-    
-  # extracting counts from SingleCellExperiment object
-  assays(pbmc)$reconstructed %>%
-
-    # SingleR
-  SingleR(
-    ref = blueprint,
-    labels = blueprint$label.main,
-    clusters = pbmc %>% pull(label)
-  ) %>%
-    
-  # Formatting results
-  as.data.frame() %>%
-  as_tibble(rownames = "label") %>%
-  select(label, first.labels)
-
-cell_type
+# # Reference cell types
+# blueprint <- BlueprintEncodeData()
+# 
+#   |================================================| 100%
+# 
+# snapshotDate(): 2021-05-18
+# see ?celldex and browseVignettes('celldex') for documentation
+# Error: failed to load resource
+#   name: EH3486
+#   title: Blueprint/Encode RNA-seq logcounts
+#   reason: argument is of length zero
+# 
+# cell_type <-
+#     
+#   # extracting counts from SingleCellExperiment object
+#   assays(pbmc)$reconstructed %>%
+# 
+#     # SingleR
+#   SingleR(
+#     ref = blueprint,
+#     labels = blueprint$label.main,
+#     clusters = pbmc %>% pull(label)
+#   ) %>%
+#     
+#   # Formatting results
+#   as.data.frame() %>%
+#   as_tibble(rownames = "label") %>%
+#   select(label, first.labels)
+# 
+# cell_type
 ```
 
 We join the cell type information to our pbmc data.
 
 ```{r}
 # Join cell type info
-pbmc <-
-  pbmc %>%
-  left_join(cell_type, by = "label")
-
-# Reorder columns
-pbmc %>% select(cell, first.labels, everything())
+# pbmc <-
+#   pbmc %>%
+#   left_join(cell_type, by = "label")
+# 
+# # Reorder columns
+# pbmc %>% select(cell, first.labels, everything())
 ```
 
 We can easily summarise the results. For example, we can see how cell type classification overlaps with cluster classification.
 
 ```{r}
-pbmc %>% count(label, first.labels)
+# pbmc %>% count(label, first.labels)
 ```
 
 ## Pseudobulk analyses
@@ -948,20 +961,25 @@ To do this, we will load a helper function called `aggregate_cells` from [GitHub
 
 ```{r warning=FALSE, message=FALSE}
 # Load aggregate function
-devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
+# devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
+# Error: <rlib_error: GitHub PAT must have one of these forms:
+#   * 40 hexadecimal digits (older PATs)
+#   * A 'ghp_' prefix followed by 36 to 251 more characters (newer PATs)
+
+
 # Aggregate
-pbmc_bulk = 
-  bioc2021tidytranscriptomics::pbmc %>% 
-  aggregate_cells(file) 
-pbmc_bulk
+# pbmc_bulk = 
+#   bioc2021tidytranscriptomics::pbmc %>% 
+#   aggregate_cells(file) 
+# pbmc_bulk
 ```
 
 ```{r}
-pbmc_bulk %>%
-  
-  # Tidybulk operations
-  tidybulk::identify_abundant() %>%
-  tidybulk::scale_abundance()
+# pbmc_bulk %>%
+#   
+#   # Tidybulk operations
+#   tidybulk::identify_abundant() %>%
+#   tidybulk::scale_abundance()
 ```
 
 ## Key Points
