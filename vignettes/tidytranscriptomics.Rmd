@@ -636,11 +636,7 @@ pbmc %>% select(sample, dataset, groups)
 
 A key quality control step performed in single-cell analyses is the assessment of the proportion of mitochondrial transcripts. A high mitochondrial count indicates cell death, and it is useful for filtering cells in a dying state.
 
-### Nesting
-
-A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to perform independent analyses on subsets of the data easily. For example, our data contains 10 single-cell datasets from different sources; we can nest by dataset and analyse the mitochondrial content for each.
-
-To demonstrate the power of nesting we'll first show the mitochondrial analysis for one of the 10 datasets.
+We'll first show the mitochondrial analysis for one of the 10 datasets.
 
 ```{r}
 one_dataset <- pbmc %>% filter(dataset =="GSE115189")
@@ -687,6 +683,12 @@ mito_info_one_dataset
 ```
 
 The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets, we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
+
+### Nesting
+
+A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources, we can nest by dataset and analyse the mitochondrial content for each.
+
+To demonstrate the power of nesting 
 
 ```{r, echo=FALSE, out.width = "600px"}
 knitr::include_graphics("../inst/vignettes/nesting.png")
