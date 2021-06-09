@@ -8,3 +8,5 @@ bioc2021tidytranscriptomics.Rcheck/
 bioc2021tidytranscriptomics*.tar.gz
 bioc2021tidytranscriptomics*.tgz
 dev
+/doc/
+/Meta/

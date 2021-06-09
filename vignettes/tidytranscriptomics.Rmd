@@ -887,7 +887,7 @@ pbmc %>% count(label)
 
 Besides PCA which is a linear dimensionality reduction, we can apply neighbour aware methods such as UMAP, to better define locally similar cells. 
 
-```{r umap SingleCellExperiment, warning=FALSE}
+```{r umap SingleCellExperiment 2, warning=FALSE}
 # Calculate UMAP with scater
 pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
@@ -905,7 +905,7 @@ Without creating any variable, check that the variability explained with the fir
 
 We can calculate the first 3 UMAP dimensions using the scater framework.
 
-```{r umap SingleCellExperiment, warning=FALSE}
+```{r umap SingleCellExperiment 3, warning=FALSE}
 # Calculate UMAP with scater
 pbmc <-
   pbmc %>%
