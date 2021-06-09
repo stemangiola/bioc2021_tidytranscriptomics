@@ -700,6 +700,45 @@ The steps above perform the mitochondrial QC analysis for one dataset. To analys
 knitr::include_graphics("../inst/vignettes/nesting.png")
 ```
 
+#### Examples of nesting
+
+```{r}
+
+my_tibble = 
+  tibble(
+  label = c("a","a","a","a","a","b","b","b","b","b" ),
+  value = 1:10
+)
+
+my_tibble
+
+# Nest
+my_tibble_nested = 
+  my_tibble %>%
+  nest(data = value)
+
+my_tibble_nested
+
+# Summarise
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value)))
+
+  
+# Summarise + filter
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
+  filter(average == max(average)) %>%
+  unnest(data)
+
+
+# Summarise + update
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
+  mutate(data = map2(data, average, ~ .x - .y )) %>%
+  unnest(data)
+
+```
+
 ```{r}
 pbmc_nested <- pbmc %>% 
     nest(data = -dataset)
@@ -707,30 +746,33 @@ pbmc_nested <- pbmc %>%
 pbmc_nested
 ```
 
+#### Long excercise on nesting
+
+Using the nest examples above, can you create a column that includes the mitochondrial information?
+
+we want to obtain this table
+
+```
+# A tibble: 10 x 3
+   dataset      data             mitochondrion_info
+   <chr>        <list>           <list>            
+ 1 GSE115189    <SnglCllE[,300]> <tibble [300 × 8]>
+ 2 10x_6K       <SnglCllE[,300]> <tibble [300 × 8]>
+ 3 10x_8K       <SnglCllE[,300]> <tibble [300 × 8]>
+ 4 SRR11038995  <SnglCllE[,300]> <tibble [300 × 8]>
+ 5 SRR7244582   <SnglCllE[,300]> <tibble [300 × 8]>
+ 6 SCP345_580   <SnglCllE[,300]> <tibble [300 × 8]>
+ 7 SCP345_860   <SnglCllE[,300]> <tibble [300 × 8]>
+ 8 SCP424_pbmc1 <SnglCllE[,300]> <tibble [300 × 8]>
+ 9 SCP424_pbmc2 <SnglCllE[,300]> <tibble [300 × 8]>
+10 SCP591       <SnglCllE[,300]> <tibble [300 × 8]>
+```
+
 We will create a table (tibble) with the mitochondrial QC information for each dataset. Here we use `map` which is often used in combination with `nest` to perform commands on nested data.
 
 ```{r}
-location <- mapIds(
-  EnsDb.Hsapiens.v86,
-  keys = rownames(pbmc),
-  column = "SEQNAME",
-  keytype = "SYMBOL"
-)
-
-mito_info_all_datasets <- pbmc_nested %>%
-    mutate(mitochondrion_info = map(
-    data,
-    ~ # Calculate mitochondrial statistics
-      perCellQCMetrics(.x, subsets = list(Mito = which(location == "MT"))) %>%
-
-      # Convert to tibble
-      as_tibble(rownames = "cell") %>%
-
-      # Label cells with high mitochondrial content
-      mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
-  ))
-
-mito_info_all_datasets
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
+mito_info_all_datasets = bioc2021tidytranscriptomics::mito_info_all_datasets 
 ```
 
 As before, we join the mitochondrial information to the original data.
@@ -811,7 +853,10 @@ pbmc <-
 
   # Integration
   pull(data) %>%
-  fastMNN() 
+  fastMNN() %>%
+  
+  # Join old information
+  left_join(pbmc %>% as_tibble())
 ```
 
 ## Identify clusters 
@@ -840,7 +885,25 @@ pbmc %>% count(label)
 
 ## Reduce dimensions
 
-Besides PCA which is a linear dimensionality reduction, we can apply neighbour aware methods such as UMAP, to better define locally similar cells. We can calculate the first 3 UMAP dimensions using the scater framework.
+Besides PCA which is a linear dimensionality reduction, we can apply neighbour aware methods such as UMAP, to better define locally similar cells. 
+
+```{r umap SingleCellExperiment, warning=FALSE}
+# Calculate UMAP with scater
+pbmc %>%
+runUMAP(ncomponents = 2, dimred="corrected") # from scater
+```
+
+#### Excercise about UMAP
+
+Without creating any variable, check that the variability explained with the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less from when calculating 3 components.
+
+**Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
+
+```{r}
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
+```
+
+We can calculate the first 3 UMAP dimensions using the scater framework.
 
 ```{r umap SingleCellExperiment, warning=FALSE}
 # Calculate UMAP with scater
@@ -932,10 +995,10 @@ pbmc <-
 pbmc %>% select(cell, first.labels, everything())
 ```
 
-We can easily summarise the results. For example, we can see how cell type classification overlaps with cluster classification.
+#### Exercise: use tidyverse grammar to identify the most abundant cell type
 
 ```{r}
-pbmc %>% count(label, first.labels)
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
 ```
 
 ## Join datasets
