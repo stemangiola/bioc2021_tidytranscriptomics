@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
-# Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk
+# Part 1 Bulk RNA sequencing with tidySummarizedExperiment and tidybulk
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
@@ -159,7 +159,7 @@ airway %>%
 
 ## Setting up the data
 
-We'll set up the airway data for our RNA-seq analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
+We'll set up the airway data for our RNA sequencing analysis. We'll create the column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
 # setup data workflow
@@ -570,9 +570,9 @@ BRCA_cell_type_long %>%
 - `tidybulk` allow easy analyses of cell type composition
 
 
-# Part 2 Single-cell RNA-seq with tidySingleCellExperiment
+# Part 2 Single-cell RNA sequencing with tidySingleCellExperiment
 
-A typical scRNA-seq workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step but you can read more about scRNA-seq workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
+A typical single-cell RNA sequencing workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step but you can read more about single-cell RNA sequencing workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
 
 In Part 1 we showed how we can study the cell-type composition of a biological sample using bulk RNA sequencing.  Single cell sequencing enables a more direct estimation of cell-type composition and gives greater resolution. For bulk RNA sequencing we need to infer the cell types using the abundance of transcripts in the whole sample, with single-cell RNA sequencing we can directly measure the transcripts in each cell and then classify the cells into cell types. 
 
