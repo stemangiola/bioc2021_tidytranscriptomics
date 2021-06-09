@@ -938,6 +938,14 @@ We can easily summarise the results. For example, we can see how cell type class
 pbmc %>% count(label, first.labels)
 ```
 
+## Join datasets
+
+We can join datasets as if theywere tibbles
+
+```{r}
+pbmc %>% bind_rows(pbmc)
+```
+
 ## Pseudobulk analyses
 
 It is sometime useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis see [here](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html).
