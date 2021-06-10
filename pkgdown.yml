@@ -5,7 +5,7 @@ articles:
   background: background.html
   solutions_to_long_problems: solutions_to_long_problems.html
   tidytranscriptomics: tidytranscriptomics.html
-last_built: 2021-06-09T11:38Z
+last_built: 2021-06-10T14:03Z
 urls:
   reference: https://stemangiola.github.io/bioc2021_tidytranscriptomics/reference
   article: https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles
