@@ -11,6 +11,6 @@ A Seurat object.
 data(pbmc)
 }
 \description{
-A SingleCellExperiment dadaset of single cell RNA sequencing data
+A SingleCellExperiment dataset of single cell RNA sequencing data
 }
 \keyword{datasets}

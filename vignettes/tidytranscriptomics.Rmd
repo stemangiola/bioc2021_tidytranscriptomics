@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 knitr::include_graphics("../inst/vignettes/roadmap.png")
 ```
 
-# Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk
+# Part 1 Bulk RNA sequencing with tidySummarizedExperiment and tidybulk
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
@@ -156,7 +156,7 @@ airway %>%
 
 ## Setting up the data
 
-We'll set up the airway data for our RNA-seq analysis. We'll create a column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
+We'll set up the airway data for our RNA sequencing analysis. We'll create a column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
 # setup data workflow
@@ -562,9 +562,9 @@ BRCA_cell_type_long %>%
 -   `tidybulk` allows streamlined multi-method analyses
 -   `tidybulk` allow easy analyses of cell-type composition
 
-# Part 2 Single-cell RNA-seq with tidySingleCellExperiment
+# Part 2 Single-cell RNA sequencing with tidySingleCellExperiment
 
-A typical single-cell RNA sequencing workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step, but you can read more about scRNA-seq workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
+A typical single-cell RNA sequencing workflow is shown in [Background information](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/background.html#differences-between-bulk-and-single-cell-rna-sequencing-1). We don't have time in this workshop to go into depth on each step but you can read more about single-cell RNA sequencing workflows in the online book [Orchestrating Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/release/OSCA/index.html).
 
 In Part 1, we showed how we can study the cell-type composition of a biological sample using bulk RNA sequencing. Single-cell sequencing enables a more direct estimation of cell-type composition and gives a greater resolution. For bulk RNA sequencing, we need to infer the cell types using the abundance of transcripts in the whole sample. With single-cell RNA sequencing, we can directly measure the transcripts in each cell and then classify the cells into cell types.
 
@@ -694,6 +694,45 @@ To demonstrate the power of nesting
 knitr::include_graphics("../inst/vignettes/nesting.png")
 ```
 
+#### Examples of nesting
+
+```{r}
+
+my_tibble = 
+  tibble(
+  label = c("a","a","a","a","a","b","b","b","b","b" ),
+  value = 1:10
+)
+
+my_tibble
+
+# Nest
+my_tibble_nested = 
+  my_tibble %>%
+  nest(data = value)
+
+my_tibble_nested
+
+# Summarise
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value)))
+
+  
+# Summarise + filter
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
+  filter(average == max(average)) %>%
+  unnest(data)
+
+
+# Summarise + update
+my_tibble_nested %>%
+  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
+  mutate(data = map2(data, average, ~ .x - .y )) %>%
+  unnest(data)
+
+```
+
 ```{r}
 pbmc_nested <- pbmc %>% 
     nest(data = -dataset)
@@ -701,30 +740,33 @@ pbmc_nested <- pbmc %>%
 pbmc_nested
 ```
 
+#### Long excercise on nesting
+
+Using the nest examples above, can you create a column that includes the mitochondrial information?
+
+we want to obtain this table
+
+```
+# A tibble: 10 x 3
+   dataset      data             mitochondrion_info
+   <chr>        <list>           <list>            
+ 1 GSE115189    <SnglCllE[,300]> <tibble [300 × 8]>
+ 2 10x_6K       <SnglCllE[,300]> <tibble [300 × 8]>
+ 3 10x_8K       <SnglCllE[,300]> <tibble [300 × 8]>
+ 4 SRR11038995  <SnglCllE[,300]> <tibble [300 × 8]>
+ 5 SRR7244582   <SnglCllE[,300]> <tibble [300 × 8]>
+ 6 SCP345_580   <SnglCllE[,300]> <tibble [300 × 8]>
+ 7 SCP345_860   <SnglCllE[,300]> <tibble [300 × 8]>
+ 8 SCP424_pbmc1 <SnglCllE[,300]> <tibble [300 × 8]>
+ 9 SCP424_pbmc2 <SnglCllE[,300]> <tibble [300 × 8]>
+10 SCP591       <SnglCllE[,300]> <tibble [300 × 8]>
+```
+
 We will create a table (tibble) with the mitochondrial QC information for each dataset. Here we use `map` which is often used in combination with `nest` to perform commands on nested data.
 
 ```{r}
-location <- mapIds(
-  EnsDb.Hsapiens.v86,
-  keys = rownames(pbmc),
-  column = "SEQNAME",
-  keytype = "SYMBOL"
-)
-
-mito_info_all_datasets <- pbmc_nested %>%
-    mutate(mitochondrion_info = map(
-    data,
-    ~ # Calculate mitochondrial statistics
-      perCellQCMetrics(.x, subsets = list(Mito = which(location == "MT"))) %>%
-
-      # Convert to tibble
-      as_tibble(rownames = "cell") %>%
-
-      # Label cells with high mitochondrial content
-      mutate(high_mitochondrion = isOutlier(subsets_Mito_percent, type = "higher"))
-  ))
-
-mito_info_all_datasets
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
+mito_info_all_datasets = bioc2021tidytranscriptomics::mito_info_all_datasets 
 ```
 
 As before, we join the mitochondrial information to the original data.
@@ -805,7 +847,10 @@ pbmc <-
 
   # Integration
   pull(data) %>%
-  fastMNN() 
+  fastMNN() %>%
+  
+  # Join old information
+  left_join(pbmc %>% as_tibble())
 ```
 
 ## Identify clusters
@@ -834,9 +879,27 @@ pbmc %>% count(label)
 
 ## Reduce dimensions
 
-Besides PCA which is a linear dimensionality reduction, we can apply neighbour aware methods such as UMAP, to better define locally similar cells. We can calculate the first 3 UMAP dimensions using the scater framework.
+Besides PCA which is a linear dimensionality reduction, we can apply neighbour aware methods such as UMAP, to better define locally similar cells. 
 
-```{r umap SingleCellExperiment, warning=FALSE}
+```{r umap SingleCellExperiment 2, warning=FALSE}
+# Calculate UMAP with scater
+pbmc %>%
+runUMAP(ncomponents = 2, dimred="corrected") # from scater
+```
+
+#### Excercise about UMAP
+
+Without creating any variable, check that the variability explained with the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less from when calculating 3 components.
+
+**Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
+
+```{r}
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
+```
+
+We can calculate the first 3 UMAP dimensions using the scater framework.
+
+```{r umap SingleCellExperiment 3, warning=FALSE}
 # Calculate UMAP with scater
 pbmc <-
   pbmc %>%
@@ -926,10 +989,18 @@ pbmc <-
 pbmc %>% select(cell, first.labels, everything())
 ```
 
-We can easily summarise the results. For example, we can see how cell type classification overlaps with cluster classification.
+#### Exercise: use tidyverse grammar to identify the most abundant cell type
 
 ```{r}
-pbmc %>% count(label, first.labels)
+# <INSERT THE CODE HERE FROM THE SOLUTIONS>
+```
+
+## Join datasets
+
+We can join datasets as if theywere tibbles
+
+```{r}
+pbmc %>% bind_rows(pbmc)
 ```
 
 ## Pseudobulk analyses
