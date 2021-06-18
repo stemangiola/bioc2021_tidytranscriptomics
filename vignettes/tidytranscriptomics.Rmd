@@ -18,6 +18,16 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{css, echo = FALSE}
+# Formatting for polls
+.poll {
+background-color: #fff4d4;
+}
+.poll code {
+	background-color: #fff4d4;
+}
+```
+
 # Workshop introduction
 
 [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
@@ -153,6 +163,7 @@ airway %>%
   # select columns to view    
   select(sample, sample_name)
 ```
+
 
 ## Setting up the data
 
@@ -290,6 +301,12 @@ counts_scal_PCA <-
   reduce_dimensions(method = "PCA")
 ```
 
+
+```{poll_4 class.source="poll"}
+Poll: What fraction of variance is explained by PC3?
+      See ?reduce_dimensions for how to get additional dimensions.
+```
+
 This joins the result to the counts' object.
 
 ```{r}
@@ -419,6 +436,9 @@ de_all %>%
   pivot_transcript() %>%
   select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, feature) %>%
   ggpairs(1:4)
+```
+```{poll_7 class.source="poll"}
+Which method detects the most differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
 ```
 
 ### Single method
@@ -552,6 +572,9 @@ BRCA_cell_type_long %>%
   ggplot(aes(x = sample, y = proportion, fill = cell_type)) +
   geom_bar(stat = "identity") +
   custom_theme
+```
+```{poll_8 class.source="poll"}
+Poll: What is the most abundant cell type overall in BRCA samples?
 ```
 
 ## Key Points
@@ -740,7 +763,7 @@ pbmc_nested <- pbmc %>%
 pbmc_nested
 ```
 
-#### Long excercise on nesting
+#### Long exercise on nesting
 
 Using the nest examples above, can you create a column that includes the mitochondrial information?
 
@@ -887,9 +910,9 @@ pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
 ```
 
-#### Excercise about UMAP
+#### Exercise about UMAP
 
-Without creating any variable, check that the variability explained with the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less from when calculating 3 components.
+Without creating any variable, check if the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less than when calculating 3 components.
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
 
