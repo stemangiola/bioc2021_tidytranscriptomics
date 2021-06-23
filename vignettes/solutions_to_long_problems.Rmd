@@ -24,9 +24,15 @@ mito_info_all_datasets <- pbmc_nested %>%
 mito_info_all_datasets
 ```
 
+## Count single cell cluster for mitochondrion. Cluster 11
+
+```
+pbmc %>% group_by(label) %>% summarise(m = median(subsets_Mito_percent )) %>% arrange(desc(m)) 
+```
+
 ## Reducing dimension - UMAP
 
-UMAP 1 of 2 components has more variability than 3 components
+UMAP 1 of 2 components has more variability than 3 components. It is less (   7.12          6.63)
 
 ```
 left_join(
@@ -42,10 +48,4 @@ left_join(
 ) %>%
     summarise(sd(UMAP1.x), sd(UMAP1.y))
 ```
-## Cell annotation
 
-Skeletal muscle
-
-```
-pbmc %>% count(label, first.labels) %>% arrange(desc(n))
-```

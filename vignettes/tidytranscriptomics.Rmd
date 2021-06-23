@@ -631,6 +631,41 @@ assayNames(pbmc)
 
 We can also interact with our object as we do with any tidyverse tibble.
 
+### Tidyverse commands
+
+And now we can also use tidyverse commands, such as `filter`, `select` and `mutate` to explore the tidySingleCellExperiment object. Some examples are shown below and more can be seen at the tidySingleCellExperiment website [here](https://stemangiola.github.io/tidySingleCellExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
+
+We can use `filter` to choose rows, for example, to see just the rows for the treated samples.
+
+```{r}
+pbmc %>% filter(groups == 1)
+```
+
+We can use `select` to choose columns, for example, to see the sample, cell, total cellular RNA
+
+```{r}
+pbmc %>% select(sample, cell, nCount_RNA)
+```
+
+We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
+
+```{r}
+pbmc %>%
+  mutate(sample_name=tolower(sample)) %>%
+  # select columns to view    
+  select(sample, sample_name)
+```
+
+
+## Join datasets
+
+We can join datasets as if theywere tibbles
+
+```{r}
+pbmc %>% bind_rows(pbmc)
+```
+
+
 ## Setting up the data
 
 In this case, we want to polish an annotation column. We will extract the sample, dataset and group information from the file name column into separate columns.
@@ -788,8 +823,8 @@ pbmc %>% select(label, everything())
 
 Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use `count` to count the number of cells in each cluster.
 
-```{r cluster count SingleCellExperiment}
-pbmc %>% count(label)
+```{poll_9 class.source="poll"}
+Poll: which cell cluster has the higher median mitochondrion transcriptional percentage?
 ```
 
 ## Reduce dimensions
@@ -802,15 +837,11 @@ pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
 ```
 
-#### Exercise about UMAP
-
-Without creating any variable, check if the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less than when calculating 3 components.
+```{poll_10 class.source="poll"}
+Poll: Is the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components.?
+```
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
-
-```{r}
-# <INSERT THE CODE HERE FROM THE SOLUTIONS>
-```
 
 We can calculate the first 3 UMAP dimensions using the scater framework.
 
@@ -837,14 +868,6 @@ pbmc %>%
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../inst/vignettes/plotly_2.png")
-```
-
-## Join datasets
-
-We can join datasets as if theywere tibbles
-
-```{r}
-pbmc %>% bind_rows(pbmc)
 ```
 
 ## Key Points
