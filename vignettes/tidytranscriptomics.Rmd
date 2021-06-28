@@ -631,6 +631,41 @@ assayNames(pbmc)
 
 We can also interact with our object as we do with any tidyverse tibble.
 
+### Tidyverse commands
+
+And now we can also use tidyverse commands, such as `filter`, `select` and `mutate` to explore the tidySingleCellExperiment object. Some examples are shown below and more can be seen at the tidySingleCellExperiment website [here](https://stemangiola.github.io/tidySingleCellExperiment/articles/introduction.html#tidyverse-commands-1). We can also use the tidyverse pipe `%>%`. This 'pipes' the output from the command on the left into the command on the right/below. Using the pipe is not essential but it reduces the amount of code we need to write when we have multiple steps. It also can make the steps clearer and easier to see. For more details on the pipe see [here](https://r4ds.had.co.nz/pipes.html).
+
+We can use `filter` to choose rows, for example, to see just the rows for the treated samples.
+
+```{r}
+pbmc %>% filter(groups == 1)
+```
+
+We can use `select` to choose columns, for example, to see the sample, cell, total cellular RNA
+
+```{r}
+pbmc %>% select(sample, cell, nCount_RNA)
+```
+
+We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
+
+```{r}
+pbmc %>%
+  mutate(sample_name=tolower(sample)) %>%
+  # select columns to view    
+  select(sample, sample_name)
+```
+
+
+## Join datasets
+
+We can join datasets as if theywere tibbles
+
+```{r}
+pbmc %>% bind_rows(pbmc)
+```
+
+
 ## Setting up the data
 
 In this case, we want to polish an annotation column. We will extract the sample, dataset and group information from the file name column into separate columns.
@@ -707,117 +742,9 @@ mito_info_one_dataset
 
 The steps above perform the mitochondrial QC analysis for one dataset. To analyse all 10 datasets, we could repeat the steps for each dataset or create a function and apply it to each dataset. However, a more efficient way is to use nesting. We can nest our data by dataset.
 
-### Nesting
-
-A powerful tool tidySingleCellExperiment enables us to use with our single-cell data is tidyverse's [nest](https://rstudio-education.github.io/tidyverse-cookbook/transform-tables.html#nest-a-data-frame). Nesting allows us to easily perform independent analyses on subsets of the data. For example, our data contains 10 single-cell datasets from different sources, we can nest by dataset and analyse the mitochondrial content for each.
-
-To demonstrate the power of nesting 
-
-```{r, echo=FALSE, out.width = "600px"}
-knitr::include_graphics("../inst/vignettes/nesting.png")
-```
-
-#### Examples of nesting
-
 ```{r}
-
-my_tibble = 
-  tibble(
-  label = c("a","a","a","a","a","b","b","b","b","b" ),
-  value = 1:10
-)
-
-my_tibble
-
-# Nest
-my_tibble_nested = 
-  my_tibble %>%
-  nest(data = value)
-
-my_tibble_nested
-
-# Summarise
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value)))
-
-  
-# Summarise + filter
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
-  filter(average == max(average)) %>%
-  unnest(data)
-
-
-# Summarise + update
-my_tibble_nested %>%
-  mutate(average = map_dbl(data, ~ mean(.x$value))) %>%
-  mutate(data = map2(data, average, ~ .x - .y )) %>%
-  unnest(data)
-
+pbmc = bioc2021tidytranscriptomics::mito_info_all_datasets 
 ```
-
-```{r}
-pbmc_nested <- pbmc %>% 
-    nest(data = -dataset)
-
-pbmc_nested
-```
-
-#### Long exercise on nesting
-
-Using the nest examples above, can you create a column that includes the mitochondrial information?
-
-we want to obtain this table
-
-```
-# A tibble: 10 x 3
-   dataset      data             mitochondrion_info
-   <chr>        <list>           <list>            
- 1 GSE115189    <SnglCllE[,300]> <tibble [300 × 8]>
- 2 10x_6K       <SnglCllE[,300]> <tibble [300 × 8]>
- 3 10x_8K       <SnglCllE[,300]> <tibble [300 × 8]>
- 4 SRR11038995  <SnglCllE[,300]> <tibble [300 × 8]>
- 5 SRR7244582   <SnglCllE[,300]> <tibble [300 × 8]>
- 6 SCP345_580   <SnglCllE[,300]> <tibble [300 × 8]>
- 7 SCP345_860   <SnglCllE[,300]> <tibble [300 × 8]>
- 8 SCP424_pbmc1 <SnglCllE[,300]> <tibble [300 × 8]>
- 9 SCP424_pbmc2 <SnglCllE[,300]> <tibble [300 × 8]>
-10 SCP591       <SnglCllE[,300]> <tibble [300 × 8]>
-```
-
-We will create a table (tibble) with the mitochondrial QC information for each dataset. Here we use `map` which is often used in combination with `nest` to perform commands on nested data.
-
-```{r}
-# <INSERT THE CODE HERE FROM THE SOLUTIONS>
-mito_info_all_datasets = bioc2021tidytranscriptomics::mito_info_all_datasets 
-```
-
-As before, we join the mitochondrial information to the original data.
-
-```{r}
-  # Join the mitochondrial information to the original SingleCellExperiment data
- mito_info_all_datasets <- mito_info_all_datasets %>%
-    mutate(data = map2(
-    data, mitochondrion_info,
-    ~ left_join(.x, .y, by = "cell")
-  )) %>%
-
-  # Remove the separate mitochondrial information table
-  select(-mitochondrion_info)
-
-mito_info_all_datasets
-```
-
-Remove the nesting to get back one table containing all datasets.
-
-```{r}
-pbmc <- mito_info_all_datasets %>%
-  unnest(data)
-
-pbmc
-```
-
-Nesting has allowed us to perform the QC on each dataset in an efficient way.
 
 We can use tidyverse to reshape the data and create [beeswarm plots](http://www.cbs.dtu.dk/~eklund/beeswarm/) to visualise the mitochondrial content.
 
@@ -896,8 +823,8 @@ pbmc %>% select(label, everything())
 
 Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use `count` to count the number of cells in each cluster.
 
-```{r cluster count SingleCellExperiment}
-pbmc %>% count(label)
+```{poll_9 class.source="poll"}
+Poll: which cell cluster has the higher median mitochondrion transcriptional percentage?
 ```
 
 ## Reduce dimensions
@@ -910,15 +837,11 @@ pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
 ```
 
-#### Exercise about UMAP
-
-Without creating any variable, check if the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) is equal/more/less than when calculating 3 components.
+```{poll_10 class.source="poll"}
+Poll: Is the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components.?
+```
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
-
-```{r}
-# <INSERT THE CODE HERE FROM THE SOLUTIONS>
-```
 
 We can calculate the first 3 UMAP dimensions using the scater framework.
 
@@ -945,112 +868,6 @@ pbmc %>%
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../inst/vignettes/plotly_2.png")
-```
-
-## Cell type classification
-
-### Manual cell type classification
-
-We can identify cluster markers (genes). As example, we are selecting the top 10 for each cluster. We can then plot a heatmap of those gene markers across cells.
-
-```{r}
-# Identify top 10 markers per cluster
-marker_genes <-
-    pbmc %>%
-    findMarkers(groups=pbmc$label, assay.type = "reconstructed") %>%  # scran
-    as.list() %>%
-    map(~ head(.x, 10) %>%  rownames()) %>%
-    unlist()
-
-# Plot heatmap
-pbmc %>%
-  plotHeatmap(                                  # from scater
-    features=marker_genes, 
-    columns=order(pbmc$label), 
-    colour_columns_by=c("label"), 
-    exprs_values  = "reconstructed"
-  ) 
-```
-
-### Automatic cell type classification
-
-We can infer cell type identities (e.g. T cell) using *SingleR* [@aran2019reference] and manipulate the output using tidyverse. SingleR [accepts any log-normalised transcript abundance matrix](https://bioconductor.org/packages/devel/bioc/vignettes/SingleR/inst/doc/SingleR.html)
-
-```{r}
-# Reference cell types
-blueprint <- BlueprintEncodeData()
-
-cell_type <-
-
-  # extracting counts from SingleCellExperiment object
-  assays(pbmc)$reconstructed %>%
-
-    # SingleR
-  SingleR(
-    ref = blueprint,
-    labels = blueprint$label.main,
-    clusters = pbmc %>% pull(label)
-  ) %>%
-
-  # Formatting results
-  as.data.frame() %>%
-  as_tibble(rownames = "label") %>%
-  select(label, first.labels)
-
-cell_type
-```
-
-We join the cell type information to our pbmc data.
-
-```{r}
-# Join cell type info
-pbmc <-
-  pbmc %>%
-  left_join(cell_type, by = "label")
-
-# Reorder columns
-pbmc %>% select(cell, first.labels, everything())
-```
-
-#### Exercise: use tidyverse grammar to identify the most abundant cell type
-
-```{r}
-# <INSERT THE CODE HERE FROM THE SOLUTIONS>
-```
-
-## Join datasets
-
-We can join datasets as if theywere tibbles
-
-```{r}
-pbmc %>% bind_rows(pbmc)
-```
-
-## Pseudobulk analyses
-
-It is sometime useful to aggregate cell-wise transcript abundance into pseudobulk samples. It is possible to explore data and perform hypothesis testing with tools and data-source that we are more familiar with. For example, we can use edgeR in tidybulk to perform differential expression testing. For more details on pseudobulk analysis see [here](https://hbctraining.github.io/scRNA-seq/lessons/pseudobulk_DESeq2_scrnaseq.html).
-
-### Data exploration using pseudobulk samples
-
-To do this, we will load a helper function called `aggregate_cells` from [GitHub Gist](https://gist.github.com/stemangiola/ebce5a3f931b298611b56680d39c073c) and use it to create a group for each sample.
-
-```{r warning=FALSE, message=FALSE}
-# Load aggregate function
-devtools::source_gist("889e4089a0e5ca2649d3c9164e3b542e")
-
-# Aggregate
-pbmc_bulk =
-  bioc2021tidytranscriptomics::pbmc %>%
-  aggregate_cells(file)
-pbmc_bulk
-```
-
-```{r}
-pbmc_bulk %>%
-
-  # Tidybulk operations
-  tidybulk::identify_abundant() %>%
-  tidybulk::scale_abundance()
 ```
 
 ## Key Points
