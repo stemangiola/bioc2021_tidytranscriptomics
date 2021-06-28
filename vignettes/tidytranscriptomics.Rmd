@@ -68,7 +68,6 @@ library(purrr)
 library(plotly)
 library(ggrepel)
 library(GGally)
-library(tidyHeatmap)
 library(tidybulk)
 # library(tidySummarizedExperiment) # we'll load this below to show what it can do
 ```
@@ -102,7 +101,29 @@ custom_theme <-
 
 ### tidySummarizedExperiment
 
-Here we will demonstrate performing a bulk RNA sequencing analysis using the data from the *airway* package with *tidySummarizedExperiment* and *tidybulk*. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
+tidySummarizedExperiment provides a bridge between Bioconductor [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) [@morgan2020summarized] and the tidyverse [@wickham2019welcome]. It enables viewing the
+Bioconductor *SummarizedExperiment* object as a tidyverse tibble, and provides SummarizedExperiment-compatible *dplyr*, *tidyr*, *ggplot* and *plotly* functions. This allows users to get the best of both Bioconductor and tidyverse worlds.
+
+
+## Functions/utilities available
+
+SummarizedExperiment-compatible Functions | Description
+------------ | -------------
+`all` | `tidySummarizedExperiment` is a SummarizedExperiment object
+
+tidyverse Packages | Description
+------------ | -------------
+`dplyr` | Almost all `dplyr` APIs like for any tibble
+`tidyr` | Almost all `tidyr` APIs like for any tibble
+`ggplot2` | `ggplot` like for any tibble
+`plotly` | `plot_ly` like for any tibble
+
+Utilities | Description
+------------ | -------------
+`tidy` | Add `tidySummarizedExperiment` invisible layer over a SummarizedExperiment object
+`as_tibble` | Convert cell-wise information to a `tbl_df`
+
+Here we will demonstrate performing a bulk RNA sequencing analysis using  *tidySummarizedExperiment* and *tidybulk*. We will use data from the *airway* package, which comes from the paper by [@himes2014rna]. It includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
 
 ```{r}
 # load airway RNA sequencing data
