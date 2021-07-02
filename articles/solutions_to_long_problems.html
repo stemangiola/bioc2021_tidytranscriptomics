@@ -106,10 +106,15 @@
 
 mito_info_all_datasets</code></pre>
 </div>
+<div id="count-single-cell-cluster-for-mitochondrion--cluster-11" class="section level2">
+<h2 class="hasAnchor">
+<a href="#count-single-cell-cluster-for-mitochondrion--cluster-11" class="anchor"></a>Count single cell cluster for mitochondrion. Cluster 11</h2>
+<pre><code>pbmc %&gt;% group_by(label) %&gt;% summarise(m = median(subsets_Mito_percent )) %&gt;% arrange(desc(m)) </code></pre>
+</div>
 <div id="reducing-dimension---umap" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reducing-dimension---umap" class="anchor"></a>Reducing dimension - UMAP</h2>
-<p>UMAP 1 of 2 components has more variability than 3 components</p>
+<p>UMAP 1 of 2 components has more variability than 3 components. It is less ( 7.12 6.63)</p>
 <pre><code>left_join(
     pbmc %&gt;%
     runUMAP(ncomponents = 2, dimred="corrected") %&gt;% 
@@ -122,12 +127,6 @@ mito_info_all_datasets</code></pre>
     by="cell"
 ) %&gt;%
     summarise(sd(UMAP1.x), sd(UMAP1.y))</code></pre>
-</div>
-<div id="cell-annotation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#cell-annotation" class="anchor"></a>Cell annotation</h2>
-<p>Skeletal muscle</p>
-<pre><code>pbmc %&gt;% count(label, first.labels) %&gt;% arrange(desc(n))</code></pre>
 </div>
   </div>
 
