@@ -28,7 +28,7 @@ background-color: #fff4d4;
 }
 ```
 
-# Workshop introduction
+# Introduction
 
 [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
@@ -46,13 +46,8 @@ knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
 
 Some of the material in Part 1 was adapted from an R RNA sequencing workshop first run [here](http://combine-australia.github.io/2016-05-11-RNAseq/). The use of the airway dataset was inspired by the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html).
 
-## Introduction
 
-Measuring gene expression on a genome-wide scale has become common practice over the last two decades or so, with microarrays predominantly used pre-2008. With the advent of next-generation sequencing technology in 2008, an increasing number of scientists use this technology to measure and understand changes in gene expression in often complex systems. As sequencing costs have decreased, using RNA sequencing to simultaneously measure the expression of tens of thousands of genes for multiple samples has never been easier. The cost of these experiments has now moved from generating the data to storing and analysing it.
-
-There are many steps involved in analysing an RNA sequencing dataset. Sequenced reads are aligned to a reference genome, then the number of reads mapped to each gene can be counted. This results in a table of counts, which is what we perform statistical analyses on in R. While mapping and counting are important and necessary tasks, today, we will be starting from the count data and showing how differential expression analysis can be performed in a friendly way using the Bioconductor package, tidybulk.
-
-First, let's load all the packages we will need to analyse the data.
+First, let's load all the packages we will need to analyse the bulk RNA sequencing data.
 
 *Note: you should load the tidybulk* and *tidySummarizedExperiment* libraries after the tidyverse core packages for best integration.
 
@@ -73,7 +68,6 @@ library(purrr)
 library(plotly)
 library(ggrepel)
 library(GGally)
-library(tidyHeatmap)
 library(tidybulk)
 # library(tidySummarizedExperiment) # we'll load this below to show what it can do
 ```
@@ -107,7 +101,29 @@ custom_theme <-
 
 ### tidySummarizedExperiment
 
-Here we will perform our analysis using the data from the *airway* package. The airway data comes from the paper by [@himes2014rna]; and it includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
+tidySummarizedExperiment provides a bridge between Bioconductor [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) [@morgan2020summarized] and the tidyverse [@wickham2019welcome]. It enables viewing the
+Bioconductor *SummarizedExperiment* object as a tidyverse tibble, and provides SummarizedExperiment-compatible *dplyr*, *tidyr*, *ggplot* and *plotly* functions. This allows users to get the best of both Bioconductor and tidyverse worlds.
+
+
+## Functions/utilities available
+
+SummarizedExperiment-compatible Functions | Description
+------------ | -------------
+`all` | `tidySummarizedExperiment` is a SummarizedExperiment object
+
+tidyverse Packages | Description
+------------ | -------------
+`dplyr` | Almost all `dplyr` APIs like for any tibble
+`tidyr` | Almost all `tidyr` APIs like for any tibble
+`ggplot2` | `ggplot` like for any tibble
+`plotly` | `plot_ly` like for any tibble
+
+Utilities | Description
+------------ | -------------
+`tidy` | Add `tidySummarizedExperiment` invisible layer over a SummarizedExperiment object
+`as_tibble` | Convert cell-wise information to a `tbl_df`
+
+Here we will demonstrate performing a bulk RNA sequencing analysis using  *tidySummarizedExperiment* and *tidybulk*. We will use data from the *airway* package, which comes from the paper by [@himes2014rna]. It includes 8 samples from human airway smooth muscle cells, from 4 cell lines. For each cell line treated (with dexamethasone) and untreated (negative control) a sample has undergone RNA sequencing and gene counts have been generated.
 
 ```{r}
 # load airway RNA sequencing data
@@ -184,34 +200,19 @@ counts <-
 counts
 ```
 
-## Filtering lowly transcribed genes
+## Pre-processing
 
-Genes with very low counts across all libraries provide little evidence for differential expression and they can interfere with some of the statistical approximations that are used later in the pipeline. They also add to the multiple testing burden when estimating false discovery rates, reducing the power to detect differentially expressed genes. These genes should be filtered out prior to further analysis.
-
-We can perform the filtering using tidybulk `keep_abundant` or `identify_abundant`. These functions can use the *edgeR* `filterByExpr` function described in [@law2016rna] to automatically identify the genes with adequate abundance for differential expression testing. By default, this will keep genes with \~10 counts in a minimum number of samples, the number of the samples in the smallest group. In this dataset, the smallest group size is four (as we have four dex-treated samples versus four untreated). Alternatively, we could use `identify_abundant` to identify which genes are abundant or not (TRUE/FALSE), rather than just keeping the abundant ones.
+We filter out lowly expressed genes and scale counts to normalise for technical and composition differences between the samples using tidybulk.
 
 ```{r}
 # Filtering counts
-counts_filtered <- counts %>% keep_abundant(factor_of_interest = dex)
-
-# take a look
-counts_filtered
-```
-
-After running `keep_abundant` we have a column called `.abundant` containing TRUE (`identify_abundant` would have TRUE/FALSE).
-
-## Scaling counts to normalise
-
-Scaling of counts (normalisation) is performed to eliminate uninteresting differences between samples due to sequencing depth or composition. A more detailed explanation can be found [here](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html). In the tidybulk package, the function `scale_abundance` generates scaled counts, with scaling factors calculated on abundant (filtered) transcripts and applied to all transcripts. We can choose from different normalisation methods. Here we will use the default edgeR's trimmed mean of M values (TMM), [@robinson2010scaling]. TMM normalisation (and most scaling normalisation methods) scale relative to one sample.
-
-```{r}
-# Scaling counts
-counts_scaled <- counts_filtered %>% scale_abundance()
+counts_scaled <- counts %>% 
+    keep_abundant(factor_of_interest = dex) %>%
+    scale_abundance()
 
 # take a look
 counts_scaled
 ```
-
 After we run, we should see some columns have been added at the end. The `counts_scaled` column contains the scaled counts.
 
 We can visualise the difference in abundance densities before and after scaling. As tidybulk output is compatible with tidyverse, we can simply pipe it into standard tidyverse functions such as `filter`, `pivot_longer` and `ggplot`. We can also take advantage of ggplot's `facet_wrap` to easily create multiple plots.
@@ -335,51 +336,6 @@ counts_scal_PCA %>%
 
 The samples group by treatment on PC1 which is what we hope to see. PC2 separates the N080611 cell line from the other samples, indicating a greater difference between that cell line and the others.
 
-### Hierarchical clustering with heatmaps
-
-An alternative to principal component analysis for examining relationships between samples is using hierarchical clustering. Heatmaps are a nice visualisation to examine hierarchical clustering of your samples. tidybulk has a simple function we can use, `keep_variable`, to extract the most variable genes which we can then plot with tidyHeatmap.
-
-```{r out.width = "70%"}
-counts_scal_PCA %>%
-
-  # extract 500 most variable genes
-  keep_variable(.abundance = counts_scaled, top = 500) %>%
-  as_tibble() %>%
-  
-  # create heatmap
-  heatmap(
-    .column = sample_name,
-    .row = feature,
-    .value = counts_scaled,
-    transform = log1p
-  ) %>%
-  add_tile(dex) %>%
-  add_tile(cell)
-```
-
-In the heatmap, we can see the samples cluster into two groups, treated and untreated, for three of the cell lines, and the cell line (N080611) again is further away from the others.
-
-Tidybulk enables a simplified way of generating a clustered heatmap of variable genes. Compare the code below for tidybulk versus a base R method.
-
-**base R using edgeR**
-
-```{r eval=FALSE}
-# Example code, no need to run
-
-library(edgeR)
-dgList <- SE2DGEList(airway)
-group <- factor(dgList$samples$dex)
-keep.exprs <- filterByExpr(dgList, group = group)
-dgList <- dgList[keep.exprs, , keep.lib.sizes = FALSE]
-dgList <- calcNormFactors(dgList)
-logcounts <- cpm(dgList, log = TRUE)
-var_genes <- apply(logcounts, 1, var)
-select_var <- names(sort(var_genes, decreasing = TRUE))[1:500]
-highly_variable_lcpm <- logcounts[select_var, ]
-colours <- c("#440154FF", "#21908CFF", "#fefada")
-col.group <- c("red", "grey")[group]
-gplots::heatmap.2(highly_variable_lcpm, col = colours, trace = "none", ColSideColors = col.group, scale = "row")
-```
 
 ## Differential expression
 
@@ -441,14 +397,6 @@ de_all %>%
 Which method detects the most differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
 ```
 
-### Single method
-
-If we just wanted to run one differential testing method we could do that. The default method is edgeR quasi-likelihood.
-
-```{r}
-counts_de <- counts_scal_PCA %>%
-  test_differential_abundance(~ dex + cell)
-```
 
 Tidybulk enables a simplified way of performing an RNA sequencing differential expression analysis (with the benefit of smoothly integrating with ggplot2 and other tidyverse packages). Compare the code for a tidybulk edgeR analysis versus standard edgeR below.
 
@@ -475,6 +423,10 @@ qlf <- glmQLFTest(fit, coef=2)
 Volcano plots are a useful genome-wide tool for checking that the analysis looks good. Volcano plots enable us to visualise the significance of change (p-value) versus the fold change (logFC). Highly significant genes are towards the top of the plot. We can also colour significant genes, e.g. genes with false-discovery rate \< 0.05. To decide which genes are differentially expressed, we usually take a cut-off of 0.05 on the FDR (or adjusted P-value), NOT the raw p-value. This is because we are testing many genes (multiple testing), and the chances of finding differentially expressed genes are very high when you do that many tests. Hence we need to control the false discovery rate, the adjusted p-value column in the results table. That is, if 100 genes are significant at a 5% false discovery rate, we are willing to accept that 5 will be false positives.
 
 ```{r out.width = "70%"}
+# run default edgeR method
+counts_de <- counts_scal_PCA %>%
+  test_differential_abundance(~ dex + cell)
+
 # volcano plot, minimal
 counts_de %>%
   ggplot(aes(x = logFC, y = PValue, colour = FDR < 0.05)) +
@@ -581,7 +533,6 @@ Poll: What is the most abundant cell type overall in BRCA samples?
 
 -   Bulk RNA sequencing data can be represented and analysed in a 'tidy' way using tidySummarizedExperiment, tidybulk and the tidyverse.
 -   tidySummarizedExperiment enables us to visualise and manipulate a Bioconductor SummarizedExperiment object as if it were in tidy data format.
--   Some of the key steps in an RNA sequencing analysis are filtering lowly abundant transcripts, adjusting for differences in sequencing depth and composition, testing for differential expression, and visualising the data, which can all be performed in a tidy way with tidybulk.
 -   `tidybulk` allows streamlined multi-method analyses
 -   `tidybulk` allow easy analyses of cell-type composition
 
@@ -651,9 +602,9 @@ We can use `mutate` to create a column. For example, we could create a new sampl
 
 ```{r}
 pbmc %>%
-  mutate(ident =tolower(ident)) %>%
+  mutate(ident_l=tolower(ident)) %>%
   # select columns to view    
-  select(cell, ident)
+  select(ident, ident_l)
 ```
 
 
