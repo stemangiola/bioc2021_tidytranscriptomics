@@ -47,6 +47,9 @@ Alternatively, you could install the workshop using the commands below in R `4.1
 # Need to set this to prevent installation erroring due to even tiny warnings, similar to here: https://github.com/r-lib/remotes/issues/403#issuecomment-748181946
 Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
 
+# Install same versions used in the workshop
+remotes::install_github(c("stemangiola/tidybulk@v1.4.0"", "stemangiola/tidySummarizedExperiment@v1.2.0", "stemangiola/tidySingleCellExperiment@v1.3.0"))
+
 # Install workshop package
 remotes::install_github("stemangiola/bioc2021_tidytranscriptomics", build_vignettes = TRUE)
 
