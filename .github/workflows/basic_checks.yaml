@@ -13,7 +13,9 @@ jobs:
 
       - name: Query dependencies and update old packages
         run: |
-        
+          ## To fix preprocessCore error https://github.com/stemangiola/tidybulk/issues/145
+          BiocManager::install("preprocessCore", configure.args="--disable-threading")
+          
           # We'll install the specific versions from the install instructions
           BiocManager::install("stemangiola/tidybulk@v1.4.0")
           BiocManager::install("stemangiola/tidySummarizedExperiment@v1.2.0")
@@ -46,10 +48,6 @@ jobs:
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
           BiocManager::repositories()
-          
-          ## To fix preprocessCore error https://github.com/stemangiola/tidybulk/issues/145
-          BiocManager::install("preprocessCore", configure.args="--disable-threading")
-          
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
