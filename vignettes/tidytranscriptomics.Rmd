@@ -595,16 +595,16 @@ pbmc %>% filter(ident == "G1")
 We can use `select` to choose columns, for example, to see the sample, cell, total cellular RNA
 
 ```{r}
-pbmc %>% select(sample, cell, nCount_RNA)
+pbmc %>% select(cell, nCount_RNA,  S.Score)
 ```
 
 We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
 
 ```{r}
 pbmc %>%
-  mutate(sample_name=tolower(sample)) %>%
+  mutate(ident_l=tolower(ident)) %>%
   # select columns to view    
-  select(sample, sample_name)
+  select(ident, ident_l)
 ```
 
 
