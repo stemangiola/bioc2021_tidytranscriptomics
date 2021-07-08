@@ -1,5 +1,5 @@
 <!-- badges: start -->
-[![DOI](https://zenodo.org/badge/306182457.svg)](https://zenodo.org/badge/latestdoi/306182457)
+[![DOI](https://zenodo.org/badge/343062488.svg)](https://zenodo.org/badge/latestdoi/343062488)
 [![.github/workflows/basic_checks.yaml](https://github.com/stemangiola/bioc2021_tidytranscriptomics/workflows/.github/workflows/basic_checks.yaml/badge.svg)](https://github.com/stemangiola/bioc2021_tidytranscriptomics/actions) [![Docker](https://github.com/Bioconductor/BioC2020/raw/master/docs/images/docker_icon.png)](https://hub.docker.com/repository/docker/stemangiola/bioc2021_tidytranscriptomics) 	
 <!-- badges: end -->
 
