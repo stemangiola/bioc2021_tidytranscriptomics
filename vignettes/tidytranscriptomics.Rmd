@@ -202,7 +202,9 @@ counts
 
 ## Pre-processing
 
-We filter out lowly expressed genes and scale counts to normalise for technical and composition differences between the samples using tidybulk.
+We filter out lowly expressed genes using tidybulk `keep_abundant` or `identify_abundant`. These functions can use the *edgeR* `filterByExpr` function described in [@law2016rna] to automatically identify the genes with adequate abundance for differential expression testing.
+
+We also scale counts to normalise for technical and composition differences between the samples using tidybulk `scale_abundance` Here we will use the default edgeR's trimmed mean of M values (TMM), [@robinson2010scaling].
 
 ```{r}
 # Filtering counts
