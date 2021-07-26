@@ -183,6 +183,8 @@ airway %>%
 
 ## Setting up the data
 
+We'll now prepare the data for a tidy analysis with tidybulk. Note that while here we use tidy SummarizedExperiment input, tidybulk also works with tibble and data.frame input.
+
 We'll set up the airway data for our RNA sequencing analysis. We'll create a column with shorter sample names and a column with gene symbols. We can get the gene symbols for these Ensembl gene ids using the Bioconductor annotation package for human, `org.Hs.eg.db`.
 
 ```{r}
@@ -527,6 +529,7 @@ BRCA_cell_type_long %>%
   geom_bar(stat = "identity") +
   custom_theme
 ```
+
 ```{poll_8 class.source="poll"}
 Poll: What is the most abundant cell type overall in BRCA samples?
 ```
