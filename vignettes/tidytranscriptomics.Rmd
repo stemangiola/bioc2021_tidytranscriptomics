@@ -665,7 +665,8 @@ de_all %>%
 ```
 
 ```{challenge_2 class.source="challenge"}
-Which method detects the largest no. of differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
+Challenge: Which method detects the largest no. of differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
+Select one of the multiple choice options in www.menti.com (code in Google doc).
 ```
 
 
@@ -799,7 +800,8 @@ BRCA_cell_type_long %>%
 ```
 
 ```{challenge_3 class.source="challenge"}
-challenge: What is the most abundant cell type overall in BRCA samples?
+Challenge: What is the most abundant cell type overall in BRCA samples?
+Select one of the multiple choice options in www.menti.com (code in Google doc).
 ```
 
 ## Key Points
@@ -1060,6 +1062,7 @@ runUMAP(ncomponents = 2, dimred="corrected") # from scater
 
 ```{challenge_4 class.source="challenge"}
 Challenge: Is the variability of the 1st UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components?
+Select one of the multiple choice options in www.menti.com (code in Google doc).
 ```
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
