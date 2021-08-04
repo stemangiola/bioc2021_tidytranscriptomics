@@ -663,8 +663,9 @@ de_all %>%
   select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, feature) %>%
   ggpairs(1:4)
 ```
+
 ```{challenge_2 class.source="challenge"}
-Which method detects the most differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
+Which method detects the largest no. of differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
 ```
 
 
@@ -1046,9 +1047,6 @@ pbmc %>% select(label, everything())
 
 Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use `count` to count the number of cells in each cluster.
 
-```{challenge_4 class.source="challenge"}
-challenge: which cell cluster has the higher median mitochondrion transcriptional percentage?
-```
 
 ## Reduce dimensions
 
@@ -1060,8 +1058,8 @@ pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
 ```
 
-```{challenge_5 class.source="challenge"}
-challenge: Is the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components.?
+```{challenge_4 class.source="challenge"}
+Challenge: Is the variability of the 1st UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components?
 ```
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
@@ -1095,7 +1093,7 @@ knitr::include_graphics("../inst/vignettes/plotly_2.png")
 
 ## Key Points
 
--   Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction, cluster identification and cell type classification
+-   Some basic steps of a single-cell RNA sequencing analysis are dimensionality reduction and cluster identification
 -   `tidySingleCellExperiment` is an invisible layer that operates on a `SingleCellExperiment` object and enables us to visualise and manipulate data as if it were a tidy data frame.
 -   `tidySingleCellExperiment` object is a `SingleCellExperiment object` so it can be used with any `SingleCellExperiment` compatible method
 

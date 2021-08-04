@@ -1,0 +1,99 @@
+---
+title: "Solutions_to_challenges"
+author: "Stefano Mangiola and Maria Doyle"
+date: "6/9/2021"
+output: html_document
+---
+
+## Which sample has the largest no. of genes with zero counts?
+
+```
+airway %>% 
+filter(counts == 0) %>% 
+group_by(sample) %>% 
+summarise(n=n()) %>% 
+arrange(n) 
+```
+
+## Which method detects the most differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
+
+Option 1) Filter each method's output separately and check no. of rows
+```
+de_all %>%
+  pivot_transcript() %>%
+  filter(edgerQLT_FDR < 0.05) %>%
+  nrow()
+
+de_all %>%
+  pivot_transcript() %>%
+  filter(edgerLR_FDR < 0.05) %>%
+  nrow()
+  
+de_all %>%
+  pivot_transcript() %>%
+  filter(voom_adj.P.Val < 0.05) %>%
+  nrow()
+
+de_all %>%
+  pivot_transcript() %>%
+  filter(deseq2_padj < 0.05) %>%
+  nrow()  
+```
+
+
+Option 2) Use pivot_longer to reshape and filter all together 
+```
+de_all %>%
+  
+  # Subset transcript information
+  pivot_transcript() %>%
+  
+  # Reshape for nesting
+  pivot_longer(
+    cols = -c(feature, symbol, .abundant, group:exon_name),
+    names_sep = "_",
+    names_to = c("method", "statistic"),
+    values_to = "value"
+  ) %>%
+  
+  # Filter statistic
+  filter(statistic %in% c("FDR", "adj.P.Val", "padj")) %>%  
+  filter(value < 0.05) %>%
+  
+  # Counting
+  count(method) %>%
+  
+  # Sort
+  arrange(desc(n))
+```
+
+## What is the most abundant cell type overall in BRCA samples?
+
+```
+BRCA_cell_type_long %>%
+  group_by(cell_type) %>%
+  summarise(m = median(proportion)) %>%
+  arrange(desc(m))
+```
+
+
+
+## Reducing dimension - UMAP
+
+UMAP 1 of 2 components has more variability than 3 components
+
+```
+left_join(
+    pbmc %>%
+    runUMAP(ncomponents = 2, dimred="corrected") %>% 
+        as_tibble() %>% 
+        select(cell, UMAP1),
+    pbmc %>%
+        runUMAP(ncomponents = 3, dimred="corrected") %>% 
+        as_tibble() %>% 
+        select(cell, UMAP1),
+    by="cell"
+) %>%
+    summarise(sd(UMAP1.x), sd(UMAP1.y))
+```
+
