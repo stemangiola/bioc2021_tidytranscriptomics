@@ -171,6 +171,14 @@ We can use `select` to choose columns, for example, to see the sample, cell line
 airway %>% select(sample, cell, dex)
 ```
 
+We can combine group_by and summarise to calculate the total number of rows (transcripts) for each sample.
+
+```{r}
+airway %>%
+    group_by(sample) %>%
+    summarise(n=n())
+```
+
 We can use `mutate` to create a column. For example, we could create a new sample_name column that contains shorter sample names. We can remove the SRR1039 prefix that's present in all of the samples, as shorter names can fit better in some of the plots we will create. We can use `mutate` together with `str_replace` to remove the SRR1039 string from the sample column.
 
 ```{r}
@@ -180,6 +188,11 @@ airway %>%
   select(sample, sample_name)
 ```
 
+
+```{poll_4 class.source="poll"}
+Challenge: Which sample has the largest no. of genes with zero counts?
+Select one of the multiple choice options in www.menti.com (code in Google doc).
+```
 
 ## Setting up the data
 
@@ -306,11 +319,6 @@ counts_scal_PCA <-
   reduce_dimensions(method = "PCA")
 ```
 
-
-```{poll_4 class.source="poll"}
-Poll: What fraction of variance is explained by PC3?
-      See ?reduce_dimensions for how to get additional dimensions.
-```
 
 This joins the result to the counts' object.
 
