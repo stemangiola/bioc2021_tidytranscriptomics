@@ -19,16 +19,274 @@ knitr::opts_chunk$set(
 ```
 
 ```{css, echo = FALSE}
-# Formatting for polls
-.poll {
+# Formatting for challenges
+.challenge {
 background-color: #fff4d4;
 }
-.poll code {
+.challenge code {
 	background-color: #fff4d4;
 }
 ```
 
-# Introduction
+# Workshop introduction
+
+```{r, echo=FALSE, out.width = "100px"}
+knitr::include_graphics("../inst/vignettes/tidybulk_logo.png")
+```
+
+## Instructors
+
+*Dr. Stefano Mangiola* is currently a Postdoctoral researcher in the laboratory of Prof. Tony Papenfuss at the Walter and Eliza Hall Institute in Melbourne, Australia. His background spans from biotechnology to bioinformatics and biostatistics. His research focuses on prostate and breast tumour microenvironment, the development of statistical models for the analysis of RNA sequencing data, and data analysis and visualisation interfaces.
+
+*Dr. Maria Doyle* is the Application and Training Specialist for Research Computing at the Peter MacCallum Cancer Centre in Melbourne, Australia. She has a PhD in Molecular Biology and currently works in bioinformatics and data science education and training. She is passionate about supporting researchers, reproducible research, open source and tidy data.
+
+## Overview
+
+Recently, [plyranges](https://bioconductor.org/packages/release/bioc/html/plyranges.html) and [tidybulk](https://www.bioconductor.org/packages/release/bioc/html/tidybulk.html) have made efforts toward the harmonization of biological data structures and workflows using the concept of data tidiness, to facilitate modularisation. In this workshop, we present [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) and [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/), two R packages that allow the user to visualise and manipulate SingleCellExperiment and SummarizedExperiment objects in a tidy fashion. Importantly, the tidybulk framework now works natively with SummarizedExperiment objects and, thanks to tidySummarizedExperiment, allows tidy and modular RNA sequencing analyses without renouncing the efficiency of Bioconductor data containers. These tools are part of the [tidytranscriptomics](https://github.com/stemangiola/tidytranscriptomics) R software suite, and represent an effort toward the harmonisation of transcriptional analyses under the tidy umbrella.
+
+### Pre-requisites
+
+* Some familiarity with tidyverse syntax
+* Some familiarity with bulk RNA-seq and single cell RNA-seq
+
+Recommended Background Reading
+[Introduction to R for Biologists](https://melbournebioinformatics.github.io/r-intro-biologists/intro_r_biologists.html)
+
+### Time outline
+
+This workshop is a 1.5 hour session.
+
+Guide
+
+| Activity - Hands on demos with challenges and Q&A                  | Time |
+|--------------------------------------------------------------------|------|
+| Part 1 Bulk RNA-seq with tidySingleCellExperiment and tidybulk     |  45  |
+| Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  45  |
+| Total                                                              |  90m |
+
+<br>
+**Format**: Hands on demos, challenges plus Q&A  
+**Interact**: Zoom chat, Menti quiz for challenges
+<br>
+<br>
+
+### Workshop goals and objectives
+
+#### Learning goals
+
+* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment, tidybulk and tidySummarizedExperiment.
+
+#### Learning objectives
+
+* Explore, visualise and analyse bulk RNA-seq count data with tidySummarizedExperiment and tidybulk
+* Explore and visualise single cell RNA-seq count data with tidySingleCellExperiment
+
+### Google doc with all links
+
+[This Google doc](https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing) has all the links you need for this workshop. This document will be made accessible at the start of the workshop as it contains the RStudio in the cloud login instructions and Menti code, which are only for Bioc2021 registered attendees.
+
+* Material
+* Menti for Audience Questions and Challenges Quiz
+* Feedback survey
+* Rstudio - instructions for logging into workshop in cloud
+
+### Audience Questions
+
+First we have a few questions for you, the audience.
+
+Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the [Google doc]((https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
+
+Then please rate the following on a scale of 1-5 (1=no/none, 5=yes/a lot)
+
+* I will code along and/or try out exercises during this workshop.  
+* I have experience with transcriptomic analyses  
+* I have experience with tidyverse  
+
+
+## What is transcriptomics?
+
+“The transcriptome is the set of all RNA transcripts, including coding and non-coding, in an individual or a population of cells”
+
+_Wikipedia_
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/transcriptomics.jpg")
+```
+
+## Why use transcriptomics?
+
+- Genome (DNA) pretty stable
+- Proteome (proteins) harder to measure
+- Transcriptome (RNA) can measure changes in expression of thousands of coding and non-coding transcripts
+<br>
+<br>
+
+## Possible experimental design
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/ScreenShot2.png")
+```
+
+## How does transcriptomics work?
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/ScreenShot3.png")
+```
+
+## Types of transcriptomic analyses
+
+* **Differential expression**  
+* **Cell type composition**  
+* Alternative splicing  
+* Novel transcript discovery  
+* Fusions identification  
+* Variant analysis  
+<br>
+Topics in bold we will see in this workshop
+<br>
+<br>
+
+## Bulk RNA sequencing differential expression workflow
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/bulk_RNAseq_pipeline.png")
+```
+
+## Differences between bulk and single-cell RNA sequencing
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/bulk_vs_single.jpg")
+```
+
+_Shalek and Benson, 2017_
+
+## Single-cell RNA sequencing analysis workflow
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/single_cell_RNAseq_pipeline.png")
+```
+
+## Tidy data and the tidyverse
+
+This workshop demonstrates how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. For more information, see the R for Data Science chapter on tidy data [here](https://r4ds.had.co.nz/tidy-data.html).
+
+```{r, echo=FALSE, out.width = "500px", fig.cap="[Tidy data for efficiency, reproducibilty and collaboration](https://www.openscapes.org/blog/2020/10/12/tidy-data/)"}
+knitr::include_graphics("../inst/vignettes/tidydata_1.jpg")
+```
+
+The tidyverse is a collection of packages that can be used to tidy, manipulate and visualise data. We'll use many functions from the tidyverse in this workshop, such as `filter`, `select`, `mutate`, `pivot_longer` and `ggplot`.
+
+```{r, echo=FALSE, out.width = "500px", fig.cap="Adapted from [Getting Started with tidyverse in R](https://www.storybench.org/getting-started-with-tidyverse-in-r/)"}
+knitr::include_graphics("../inst/vignettes/tidyverse.png")
+```
+
+### Audience Questions
+
+First we have a few questions for you, the audience.
+
+Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the [Google doc](https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
+
+Then please rate the following on a scale of 1-5 (1=no/none, 5=yes/a lot)
+
+* I will code along and/or try out exercises during this workshop.  
+* I have experience with transcriptomic analyses  
+* I have experience with tidyverse  
+
+
+## What is transcriptomics?
+
+“The transcriptome is the set of all RNA transcripts, including coding and non-coding, in an individual or a population of cells”
+
+_Wikipedia_
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/transcriptomics.jpg")
+```
+
+## Why use transcriptomics?
+
+- Genome (DNA) pretty stable
+- Proteome (proteins) harder to measure
+- Transcriptome (RNA) can measure changes in expression of thousands of coding and non-coding transcripts
+<br>
+<br>
+
+## Possible experimental design
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/ScreenShot2.png")
+```
+
+## How does transcriptomics work?
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/ScreenShot3.png")
+```
+
+## Types of transcriptomic analyses
+
+* **Differential expression**  
+* **Cell type composition**  
+* Alternative splicing  
+* Novel transcript discovery  
+* Fusions identification  
+* Variant analysis  
+<br>
+Topics in bold we will see in this workshop
+<br>
+<br>
+
+## Bulk RNA sequencing differential expression workflow
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/bulk_RNAseq_pipeline.png")
+```
+
+## Differences between bulk and single-cell RNA sequencing
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/bulk_vs_single.jpg")
+```
+
+_Shalek and Benson, 2017_
+
+## Single-cell RNA sequencing analysis workflow
+
+```{r, echo=FALSE, out.width = "600px"}
+knitr::include_graphics("../inst/vignettes/single_cell_RNAseq_pipeline.png")
+```
+
+## Tidy data and the tidyverse
+
+This workshop demonstrates how to perform analysis of RNA sequencing data following the tidy data paradigm [@wickham2014tidy]. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. For more information, see the R for Data Science chapter on tidy data [here](https://r4ds.had.co.nz/tidy-data.html).
+
+```{r, echo=FALSE, out.width = "500px", fig.cap="[Tidy data for efficiency, reproducibilty and collaboration](https://www.openscapes.org/blog/2020/10/12/tidy-data/)"}
+knitr::include_graphics("../inst/vignettes/tidydata_1.jpg")
+```
+
+The tidyverse is a collection of packages that can be used to tidy, manipulate and visualise data. We'll use many functions from the tidyverse in this workshop, such as `filter`, `select`, `mutate`, `pivot_longer` and `ggplot`.
+
+```{r, echo=FALSE, out.width = "500px", fig.cap="Adapted from [Getting Started with tidyverse in R](https://www.storybench.org/getting-started-with-tidyverse-in-r/)"}
+knitr::include_graphics("../inst/vignettes/tidyverse.png")
+```
+
+## Getting started 
+
+### Cloud
+
+Easiest way to run this material. Only available during workshop. 
+
+ * Login to workshop as per the instructions in the [Google doc]((https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
+ * Open `tidytranscriptomics.Rmd` in `bioc2021_tidytranscriptomcs/vignettes` folder
+ 
+
+### Local
+
+We will use the Cloud during the Bioc2021 workshop and this method is available if you want to run the material after the workshop. If you want to install on your own computer, see instructions [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/index.html#workshop-package-installation). 
+
+Alternatively, you can view the material at the workshop webpage [here](https://stemangiola.github.io/bioc2021_tidytranscriptomics/articles/tidytranscriptomics.html). 
+
+## What is tidytranscriptomics?
 
 [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
@@ -189,7 +447,7 @@ airway %>%
 ```
 
 
-```{poll_4 class.source="poll"}
+```{challenge_1 class.source="challenge"}
 Challenge: Which sample has the largest no. of genes with zero counts?
 Select one of the multiple choice options in www.menti.com (code in Google doc).
 ```
@@ -405,7 +663,7 @@ de_all %>%
   select(edgerQLT_PValue, edgerLR_PValue, voom_P.Value, deseq2_pvalue, feature) %>%
   ggpairs(1:4)
 ```
-```{poll_7 class.source="poll"}
+```{challenge_2 class.source="challenge"}
 Which method detects the most differentially abundant transcripts, p value adjusted for multiple testing <  0.05 (FDR, adj.P.Val, padj)?
 ```
 
@@ -441,6 +699,7 @@ counts_de <- counts_scal_PCA %>%
 
 # volcano plot, minimal
 counts_de %>%
+  pivot_transcript() %>%
   ggplot(aes(x = logFC, y = PValue, colour = FDR < 0.05)) +
   geom_point() +
   scale_y_continuous(trans = "log10_reverse") +
@@ -538,8 +797,8 @@ BRCA_cell_type_long %>%
   custom_theme
 ```
 
-```{poll_8 class.source="poll"}
-Poll: What is the most abundant cell type overall in BRCA samples?
+```{challenge_3 class.source="challenge"}
+challenge: What is the most abundant cell type overall in BRCA samples?
 ```
 
 ## Key Points
@@ -787,8 +1046,8 @@ pbmc %>% select(label, everything())
 
 Thanks to tidySingleCellExperiment we can interrogate the object with tidyverse commands and use `count` to count the number of cells in each cluster.
 
-```{poll_9 class.source="poll"}
-Poll: which cell cluster has the higher median mitochondrion transcriptional percentage?
+```{challenge_4 class.source="challenge"}
+challenge: which cell cluster has the higher median mitochondrion transcriptional percentage?
 ```
 
 ## Reduce dimensions
@@ -801,8 +1060,8 @@ pbmc %>%
 runUMAP(ncomponents = 2, dimred="corrected") # from scater
 ```
 
-```{poll_10 class.source="poll"}
-Poll: Is the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components.?
+```{challenge_5 class.source="challenge"}
+challenge: Is the variability explained by the first UMAP dimension when calculating 2 components (ncomponents = 2) equal/more/less than when calculating 3 components.?
 ```
 
 **Tip: your can use as_tibble() to convert the tibble abstraction to a simple (and light) cell-wise tibble**
