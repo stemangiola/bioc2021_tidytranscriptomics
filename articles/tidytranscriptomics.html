@@ -269,99 +269,6 @@ background-color: #fff4d4;
 Adapted from <a href="https://www.storybench.org/getting-started-with-tidyverse-in-r/">Getting Started with tidyverse in R</a>
 </p>
 </div>
-<div id="audience-questions-1" class="section level3">
-<h3 class="hasAnchor">
-<a href="#audience-questions-1" class="anchor"></a>Audience Questions</h3>
-<p>First we have a few questions for you, the audience.</p>
-<p>Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the <a href="https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing">Google doc</a>.</p>
-<p>Then please rate the following on a scale of 1-5 (1=no/none, 5=yes/a lot)</p>
-<ul>
-<li>I will code along and/or try out exercises during this workshop.<br>
-</li>
-<li>I have experience with transcriptomic analyses<br>
-</li>
-<li>I have experience with tidyverse</li>
-</ul>
-</div>
-</div>
-<div id="what-is-transcriptomics-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#what-is-transcriptomics-1" class="anchor"></a>What is transcriptomics?</h2>
-<p>“The transcriptome is the set of all RNA transcripts, including coding and non-coding, in an individual or a population of cells”</p>
-<p><em>Wikipedia</em></p>
-<p><img src="../inst/vignettes/transcriptomics.jpg" width="600px"></p>
-</div>
-<div id="why-use-transcriptomics-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#why-use-transcriptomics-1" class="anchor"></a>Why use transcriptomics?</h2>
-<ul>
-<li>Genome (DNA) pretty stable</li>
-<li>Proteome (proteins) harder to measure</li>
-<li>Transcriptome (RNA) can measure changes in expression of thousands of coding and non-coding transcripts <br><br>
-</li>
-</ul>
-</div>
-<div id="possible-experimental-design-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#possible-experimental-design-1" class="anchor"></a>Possible experimental design</h2>
-<p><img src="../inst/vignettes/ScreenShot2.png" width="600px"></p>
-</div>
-<div id="how-does-transcriptomics-work-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-does-transcriptomics-work-1" class="anchor"></a>How does transcriptomics work?</h2>
-<p><img src="../inst/vignettes/ScreenShot3.png" width="600px"></p>
-</div>
-<div id="types-of-transcriptomic-analyses-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#types-of-transcriptomic-analyses-1" class="anchor"></a>Types of transcriptomic analyses</h2>
-<ul>
-<li>
-<strong>Differential expression</strong><br>
-</li>
-<li>
-<strong>Cell type composition</strong><br>
-</li>
-<li>Alternative splicing<br>
-</li>
-<li>Novel transcript discovery<br>
-</li>
-<li>Fusions identification<br>
-</li>
-<li>Variant analysis<br><br> Topics in bold we will see in this workshop <br><br>
-</li>
-</ul>
-</div>
-<div id="bulk-rna-sequencing-differential-expression-workflow-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#bulk-rna-sequencing-differential-expression-workflow-1" class="anchor"></a>Bulk RNA sequencing differential expression workflow</h2>
-<p><img src="../inst/vignettes/bulk_RNAseq_pipeline.png" width="600px"></p>
-</div>
-<div id="differences-between-bulk-and-single-cell-rna-sequencing-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#differences-between-bulk-and-single-cell-rna-sequencing-1" class="anchor"></a>Differences between bulk and single-cell RNA sequencing</h2>
-<p><img src="../inst/vignettes/bulk_vs_single.jpg" width="600px"></p>
-<p><em>Shalek and Benson, 2017</em></p>
-</div>
-<div id="single-cell-rna-sequencing-analysis-workflow-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#single-cell-rna-sequencing-analysis-workflow-1" class="anchor"></a>Single-cell RNA sequencing analysis workflow</h2>
-<p><img src="../inst/vignettes/single_cell_RNAseq_pipeline.png" width="600px"></p>
-</div>
-<div id="tidy-data-and-the-tidyverse-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tidy-data-and-the-tidyverse-1" class="anchor"></a>Tidy data and the tidyverse</h2>
-<p>This workshop demonstrates how to perform analysis of RNA sequencing data following the tidy data paradigm <span class="citation">(Wickham and others 2014)</span>. The tidy data paradigm provides a standard way to organise data values within a dataset, where each variable is a column, each observation is a row, and data is manipulated using an easy-to-understand vocabulary. Most importantly, the data structure remains consistent across manipulation and analysis functions. For more information, see the R for Data Science chapter on tidy data <a href="https://r4ds.had.co.nz/tidy-data.html">here</a>.</p>
-<div class="figure">
-<img src="../inst/vignettes/tidydata_1.jpg" alt="[Tidy data for efficiency, reproducibilty and collaboration](https://www.openscapes.org/blog/2020/10/12/tidy-data/)" width="500px"><p class="caption">
-<a href="https://www.openscapes.org/blog/2020/10/12/tidy-data/">Tidy data for efficiency, reproducibilty and collaboration</a>
-</p>
-</div>
-<p>The tidyverse is a collection of packages that can be used to tidy, manipulate and visualise data. We’ll use many functions from the tidyverse in this workshop, such as <code>filter</code>, <code>select</code>, <code>mutate</code>, <code>pivot_longer</code> and <code>ggplot</code>.</p>
-<div class="figure">
-<img src="../inst/vignettes/tidyverse.png" alt="Adapted from [Getting Started with tidyverse in R](https://www.storybench.org/getting-started-with-tidyverse-in-r/)" width="500px"><p class="caption">
-Adapted from <a href="https://www.storybench.org/getting-started-with-tidyverse-in-r/">Getting Started with tidyverse in R</a>
-</p>
-</div>
 </div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
@@ -721,7 +628,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="va">custom_theme</span>
 <span class="co">#&gt; tidySummarizedExperiment says: A data frame is returned for independent data analysis.</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-34-1.png" width="70%"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-26-1.png" width="70%"></p>
 <p>In this dataset, the distributions of the counts are not very different to each other before scaling, but scaling does make the distributions more similar. If we saw a sample with a very different distribution, we may need to investigate it.</p>
 <p>As tidybulk smoothly integrates with ggplot2 and other tidyverse packages it can save on typing and make plots easier to generate. Compare the code for creating density plots with tidybulk versus standard base R below (standard code adapted from <span class="citation">(Law et al. 2016)</span>).</p>
 <p><strong>tidybulk</strong></p>
@@ -841,7 +748,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html">geom_text_repel</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">sample_name</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
   <span class="va">custom_theme</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-40-1.png" width="70%"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-32-1.png" width="70%"></p>
 <p>The samples group by treatment on PC1 which is what we hope to see. PC2 separates the N080611 cell line from the other samples, indicating a greater difference between that cell line and the others.</p>
 </div>
 </div>
@@ -921,7 +828,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://rdrr.io/pkg/tidybulk/man/pivot_transcript-methods.html">pivot_transcript</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/tidySummarizedExperiment/man/dplyr-methods.html">select</a></span><span class="op">(</span><span class="va">edgerQLT_PValue</span>, <span class="va">edgerLR_PValue</span>, <span class="va">voom_P.Value</span>, <span class="va">deseq2_pvalue</span>, <span class="va">feature</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-42-1.png" width="700"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
 <pre class="challenge_2 challenge"><code>Challenge: Which method detects the largest no. of differentially abundant transcripts, p value adjusted for multiple testing &lt;  0.05 (FDR, adj.P.Val, padj)?
 Select one of the multiple choice options in www.menti.com (code in Google doc).</code></pre>
 <p>Tidybulk enables a simplified way of performing an RNA sequencing differential expression analysis (with the benefit of smoothly integrating with ggplot2 and other tidyverse packages). Compare the code for a tidybulk edgeR analysis versus standard edgeR below.</p>
@@ -965,7 +872,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="st">"log10_reverse"</span><span class="op">)</span> <span class="op">+</span>
   <span class="va">custom_theme</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-45-1.png" width="70%"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-37-1.png" width="70%"></p>
 <p>We’ll extract the symbols for a few top genes (by P value) to use in a more informative volcano plot, integrating some of the packages in tidyverse.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">topgenes_symbols</span> <span class="op">&lt;-</span>
@@ -997,7 +904,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html">scale_size_discrete</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Scale for 'colour' is already present. Adding another scale for 'colour',</span>
 <span class="co">#&gt; which will replace the existing scale.</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-47-1.png" width="70%"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-39-1.png" width="70%"></p>
 </div>
 <div id="automatic-bibliography" class="section level2">
 <h2 class="hasAnchor">
@@ -1155,7 +1062,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://rdrr.io/pkg/tidySummarizedExperiment/man/ggplot2-methods.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample</span>, y <span class="op">=</span> <span class="va">proportion</span>, fill <span class="op">=</span> <span class="va">cell_type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>
   <span class="va">custom_theme</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-52-1.png" width="700"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
 <pre class="challenge_3 challenge"><code>Challenge: What is the most abundant cell type overall in BRCA samples?
 Select one of the multiple choice options in www.menti.com (code in Google doc).</code></pre>
 </div>
@@ -1482,7 +1389,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">50</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; tidySingleCellExperiment says: A data frame is returned for independent data analysis.</span></code></pre></div>
-<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-69-1.png" width="700"></p>
+<p><img src="tidytranscriptomics_files/figure-html/unnamed-chunk-61-1.png" width="700"></p>
 <p>In the faceted plot, “detected” is the number of genes in each of the 10 datasets, “sum” is the total counts.</p>
 <p>We then proceed to filter out cells with high mitochondrial content.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
