@@ -10,6 +10,9 @@ RUN apt-get update && \
 
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocManager::install(ask=FALSE)"
 
+## Add DelayedMatrixStats temporary workaround https://github.com/PeteHaitch/DelayedMatrixStats/issues/84#issuecomment-893101166
+RUN Rscript -e "BiocManager::install('PeteHaitch/DelayedMatrixStats@949d3868d26a63861abe6109e18e62f352c0c41e')"
+          
 ## To fix preprocessCore error https://github.com/stemangiola/tidybulk/issues/145
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocManager::install('preprocessCore', configure.args='--disable-threading')"
 

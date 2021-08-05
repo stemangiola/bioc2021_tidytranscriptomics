@@ -99,15 +99,15 @@ Guide
 
 | Activity - Hands on demos with Q&A                                 | Time |
 |--------------------------------------------------------------------|------|
-| Part 1 Bulk RNA-seq with tidybulk                                  |  45  |
+| Part 1 Bulk RNA-seq with tidySingleCellExperiment and tidybulk     |  45  |
 | Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  45  |
 | Total                                                              |  90m |
 
 
 #### Learning goals
 
-* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment and tidySummarizedExperiment.
+* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment, tidybulk and tidySummarizedExperiment.
 
 #### Learning objectives
-* Explore and visualise bulk RNA-seq count data with tidySummarizedExperiment
-* Explore and visualise single cell RNA-seq  count data with tidySingleCellExperiment
+* Explore, visualise and analyse bulk RNA-seq count data with tidySummarizedExperiment and tidybulk
+* Explore and visualise single cell RNA-seq count data with tidySingleCellExperiment
