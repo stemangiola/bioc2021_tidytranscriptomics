@@ -736,7 +736,7 @@ pbmc <- pbmc %>% filter(!high_mitochondrion)
 
 As we are working with multiple datasets, we need to integrate them and adjust for technical variability between them. Here we'll nest by dataset (batch), normalise within each batch with `multiBatchNorm` and correct for batch effects with `fastMNN`.
 
-```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE}
+```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE, eval = FALSE}
 # Scaling within each dataset
 pbmc <-
   pbmc %>%
@@ -754,6 +754,12 @@ pbmc <-
   
   # Join old information
   left_join(pbmc %>% as_tibble())
+```
+
+```{r}
+# Load the integrated dataset
+pbmc = bioc2021tidytranscriptomics::pbmc_integrated 
+
 ```
 
 ## Identify clusters
