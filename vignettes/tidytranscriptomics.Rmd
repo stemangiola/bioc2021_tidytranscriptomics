@@ -291,7 +291,7 @@ Alternatively, you can view the material at the workshop webpage [here](https://
 [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
 ```{r, echo=FALSE, out.width = "600px"}
-knitr::include_graphics("../inst/vignettes/roadmap.png")
+knitr::include_graphics("../inst/vignettes/roadmap_integration.png")
 ```
 
 # Part 1 Bulk RNA sequencing with tidySummarizedExperiment and tidybulk
@@ -1009,7 +1009,7 @@ pbmc <- pbmc %>% filter(!high_mitochondrion)
 
 As we are working with multiple datasets, we need to integrate them and adjust for technical variability between them. Here we'll nest by dataset (batch), normalise within each batch with `multiBatchNorm` and correct for batch effects with `fastMNN`.
 
-```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE}
+```{r preprocess SingleCellExperiment, message=FALSE, warning=FALSE, eval = FALSE}
 # Scaling within each dataset
 pbmc <-
   pbmc %>%
@@ -1027,6 +1027,12 @@ pbmc <-
   
   # Join old information
   left_join(pbmc %>% as_tibble())
+```
+
+```{r}
+# Load the integrated dataset
+pbmc = bioc2021tidytranscriptomics::pbmc_integrated 
+
 ```
 
 ## Identify clusters
