@@ -5,7 +5,7 @@
 \alias{mito_info_all_datasets}
 \title{mito_info_all_datasets}
 \format{
-A Seurat object.
+A SingleCellExperiment object.
 }
 \usage{
 data(mito_info_all_datasets)
