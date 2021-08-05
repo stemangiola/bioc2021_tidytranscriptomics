@@ -33,7 +33,7 @@ background-color: #fff4d4;
 [tidybulk](https://stemangiola.github.io/tidybulk/), [tidySummarizedExperiment](https://stemangiola.github.io/tidySummarizedExperiment/) and [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/) are part of the tidytranscriptomics suite that introduces a tidy approach to RNA sequencing data representation and analysis. The roadmap for the development of the tidytranscriptomics packages is shown in the figure below.
 
 ```{r, echo=FALSE, out.width = "600px"}
-knitr::include_graphics("../inst/vignettes/roadmap.png")
+knitr::include_graphics("../inst/vignettes/roadmap_integration.png")
 ```
 
 # Part 1 Bulk RNA sequencing with tidySummarizedExperiment and tidybulk
