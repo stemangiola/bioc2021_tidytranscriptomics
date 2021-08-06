@@ -74,7 +74,7 @@ Recommended Background Reading
 
 ### Workshop Participation
 
-The workshop format is a 1.5 hour session consisting of hands-on demos and Q&A.
+The workshop format is a 1.5 hour session consisting of hands-on demos, challenges and Q&A.
 
 ### _R_ / _Bioconductor_ packages used
 
@@ -99,14 +99,14 @@ Guide
 
 | Activity - Hands on demos with Q&A                                 | Time |
 |--------------------------------------------------------------------|------|
-| Part 1 Bulk RNA-seq with tidySingleCellExperiment and tidybulk     |  45  |
+| Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk     |  45  |
 | Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  45  |
 | Total                                                              |  90m |
 
 
 #### Learning goals
 
-* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment, tidybulk and tidySummarizedExperiment.
+* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySummarizedExperiment, tidybulk and tidySingleCellExperiment.
 
 #### Learning objectives
 * Explore, visualise and analyse bulk RNA-seq count data with tidySummarizedExperiment and tidybulk
