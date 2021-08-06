@@ -70,7 +70,7 @@
 
       
 
-      </header><script src="tidytranscriptomics_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><script src="tidytranscriptomics_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to Tidy Transcriptomics</h1>
@@ -131,7 +131,7 @@ background-color: #fff4d4;
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Part 1 Bulk RNA-seq with tidySingleCellExperiment and tidybulk</td>
+<td>Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk</td>
 <td>45</td>
 </tr>
 <tr class="even">
@@ -144,7 +144,7 @@ background-color: #fff4d4;
 </tr>
 </tbody>
 </table>
-<p><br><strong>Format</strong>: Hands on demos, challenges plus Q&amp;A<br><strong>Interact</strong>: Zoom chat, Menti quiz for challenges <br><br></p>
+<p><br><strong>Format</strong>: Hands on demos, challenges plus Q&amp;A<br><strong>Interact</strong>: Airmeet for questions, Menti quiz for challenges <br><br></p>
 </div>
 <div id="workshop-goals-and-objectives" class="section level3">
 <h3 class="hasAnchor">
@@ -153,7 +153,7 @@ background-color: #fff4d4;
 <h4 class="hasAnchor">
 <a href="#learning-goals" class="anchor"></a>Learning goals</h4>
 <ul>
-<li>To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment, tidybulk and tidySummarizedExperiment.</li>
+<li>To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySummarizedExperiment, tidybulk and tidySingleCellExperiment.</li>
 </ul>
 </div>
 <div id="learning-objectives" class="section level4">
@@ -180,7 +180,7 @@ background-color: #fff4d4;
 <h3 class="hasAnchor">
 <a href="#audience-questions" class="anchor"></a>Audience Questions</h3>
 <p>First we have a few questions for you, the audience.</p>
-<p>Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the [Google doc]((<a href="https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing" class="uri">https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing</a>).</p>
+<p>Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the <a href="https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing">Google doc</a>.</p>
 <p>Then please rate the following on a scale of 1-5 (1=no/none, 5=yes/a lot)</p>
 <ul>
 <li>I will code along and/or try out exercises during this workshop.<br>
@@ -278,7 +278,7 @@ Adapted from <a href="https://www.storybench.org/getting-started-with-tidyverse-
 <a href="#cloud" class="anchor"></a>Cloud</h3>
 <p>Easiest way to run this material. Only available during workshop.</p>
 <ul>
-<li>Login to workshop as per the instructions in the [Google doc]((<a href="https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing" class="uri">https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing</a>).</li>
+<li>Login to workshop as per the instructions in the <a href="https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing">Google doc</a>.</li>
 <li>Open <code>tidytranscriptomics.Rmd</code> in <code>bioc2021_tidytranscriptomcs/vignettes</code> folder</li>
 </ul>
 </div>
@@ -353,7 +353,7 @@ Adapted from <a href="https://www.storybench.org/getting-started-with-tidyverse-
 <div id="tidysummarizedexperiment" class="section level3">
 <h3 class="hasAnchor">
 <a href="#tidysummarizedexperiment" class="anchor"></a>tidySummarizedExperiment</h3>
-<p>tidySummarizedExperiment provides a bridge between Bioconductor <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html">SummarizedExperiment</a> <span class="citation">(<strong>morgan2020summarized?</strong>)</span> and the tidyverse <span class="citation">(Wickham et al. 2019)</span>. It enables viewing the Bioconductor <em>SummarizedExperiment</em> object as a tidyverse tibble, and provides SummarizedExperiment-compatible <em>dplyr</em>, <em>tidyr</em>, <em>ggplot</em> and <em>plotly</em> functions. This allows users to get the best of both Bioconductor and tidyverse worlds.</p>
+<p>tidySummarizedExperiment provides a bridge between Bioconductor <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html">SummarizedExperiment</a> <span class="citation">(Morgan et al. 2021)</span> and the tidyverse <span class="citation">(Wickham et al. 2019)</span>. It enables viewing the Bioconductor <em>SummarizedExperiment</em> object as a tidyverse tibble, and provides SummarizedExperiment-compatible <em>dplyr</em>, <em>tidyr</em>, <em>ggplot</em> and <em>plotly</em> functions. This allows users to get the best of both Bioconductor and tidyverse worlds.</p>
 </div>
 <div id="functionsutilities-available" class="section level2">
 <h2 class="hasAnchor">
@@ -1101,7 +1101,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
 <div id="introduction-to-tidysinglecellexperiment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction-to-tidysinglecellexperiment" class="anchor"></a>Introduction to tidySingleCellExperiment</h2>
-<p>The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (PBMC) datasets. The datasets are from GSE115189/SRR7244582 <span class="citation">(Freytag et al. 2018)</span>, SRR11038995 [<span class="citation">Cai et al. (2020)</span>, SCP345 (singlecell.broadinstitute.org), SCP424 <span class="citation">(Ding et al. 2020)</span>, SCP591 <span class="citation">(Karagiannis et al. 2020)</span> and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html">SingleCellExperiment</a> format. SingleCellExperiment is a very popular container of single-cell RNA sequencing data.</p>
+<p>The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (PBMC) datasets. The datasets are from GSE115189/SRR7244582 <span class="citation">(Freytag et al. 2018)</span>, SRR11038995 [<span class="citation">Cai et al. (2020)</span>, SCP345 (singlecell.broadinstitute.org), SCP424 <span class="citation">(Ding et al. 2020)</span>, SCP591 <span class="citation">(Karagiannis et al. 2020)</span> and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html">SingleCellExperiment</a> format <span class="citation">(Amezquita et al. 2019)</span>. SingleCellExperiment is a very popular container of single-cell RNA sequencing data.</p>
 <p>Similar to what we saw with tidySummarizedExperiment, <code>tidySingleCellExperiment</code> package enables any <em>SingleCellExperiment</em> object to be displayed and manipulated according to tidy data principles without affecting any <em>SingleCellExperiment</em> behaviour.</p>
 <p>If we load the <em>tidySingleCellExperiment</em> package and then view the PBMC data, it displays as a tibble.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -1553,7 +1553,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
 <span class="co">#&gt; other attached packages:</span>
 <span class="co">#&gt;  [1] tidySingleCellExperiment_1.3.0 ggbeeswarm_0.6.0              </span>
 <span class="co">#&gt;  [3] celldex_1.3.0                  EnsDb.Hsapiens.v86_2.99.0     </span>
-<span class="co">#&gt;  [5] ensembldb_2.17.3               AnnotationFilter_1.17.1       </span>
+<span class="co">#&gt;  [5] ensembldb_2.17.4               AnnotationFilter_1.17.1       </span>
 <span class="co">#&gt;  [7] GenomicFeatures_1.45.0         AnnotationDbi_1.55.1          </span>
 <span class="co">#&gt;  [9] SingleR_1.7.1                  batchelor_1.9.0               </span>
 <span class="co">#&gt; [11] igraph_1.2.6                   scran_1.21.3                  </span>
@@ -1584,7 +1584,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
 <span class="co">#&gt;  [19] bit64_4.0.5                       farver_2.1.0                     </span>
 <span class="co">#&gt;  [21] pheatmap_1.0.12                   rprojroot_2.0.2                  </span>
 <span class="co">#&gt;  [23] vctrs_0.3.8                       generics_0.1.0                   </span>
-<span class="co">#&gt;  [25] xfun_0.24                         dittoSeq_1.5.1                   </span>
+<span class="co">#&gt;  [25] xfun_0.25                         dittoSeq_1.5.1                   </span>
 <span class="co">#&gt;  [27] BiocFileCache_2.1.1               R6_2.5.0                         </span>
 <span class="co">#&gt;  [29] rsvd_1.0.5                        locfit_1.5-9.4                   </span>
 <span class="co">#&gt;  [31] bitops_1.0-7                      cachem_1.0.5                     </span>
@@ -1624,7 +1624,7 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
 <span class="co">#&gt;  [99] annotate_1.71.0                   vipor_0.4.5                      </span>
 <span class="co">#&gt; [101] bslib_0.2.5.1                     dqrng_0.3.0                      </span>
 <span class="co">#&gt; [103] XVector_0.33.0                    digest_0.6.27                    </span>
-<span class="co">#&gt; [105] Biostrings_2.61.1                 rmarkdown_2.9                    </span>
+<span class="co">#&gt; [105] Biostrings_2.61.2                 rmarkdown_2.10                   </span>
 <span class="co">#&gt; [107] uwot_0.1.10                       edgeR_3.35.0                     </span>
 <span class="co">#&gt; [109] DelayedMatrixStats_1.15.1         restfulr_0.0.13                  </span>
 <span class="co">#&gt; [111] curl_4.3.2                        shiny_1.6.0                      </span>
@@ -1652,6 +1652,9 @@ Select one of the multiple choice options in www.menti.com (code in Google doc).
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-abbas2009deconvolution" class="csl-entry">
 Abbas, Alexander R, Kristen Wolslegel, Dhaya Seshasayee, Zora Modrusan, and Hilary F Clark. 2009. <span>“Deconvolution of Blood Microarray Data Identifies Cellular Activation Patterns in Systemic Lupus Erythematosus.”</span> <em>PloS One</em> 4 (7): e6098.
+</div>
+<div id="ref-Amezquita2019" class="csl-entry">
+Amezquita, Robert A., Aaron T. L. Lun, Etienne Becht, Vince J. Carey, Lindsay N. Carpp, Ludwig Geistlinger, Federico Marini, et al. 2019. <span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span> <em>Nature Methods</em> 17 (2): 137–45. <a href="https://doi.org/10.1038/s41592-019-0654-x">https://doi.org/10.1038/s41592-019-0654-x</a>.
 </div>
 <div id="ref-Cai2020" class="csl-entry">
 Cai, Yi, Youchao Dai, Yejun Wang, Qianqing Yang, Jiubiao Guo, Cailing Wei, Weixin Chen, et al. 2020. <span>“Single-Cell Transcriptomics of Blood Reveals a Natural Killer Cell Subset Depletion in Tuberculosis.”</span> <em><span>EBioMedicine</span></em> 53 (March): 102686. <a href="https://doi.org/10.1016/j.ebiom.2020.102686">https://doi.org/10.1016/j.ebiom.2020.102686</a>.
@@ -1682,6 +1685,9 @@ Love, Michael I, Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Esti
 </div>
 <div id="ref-mccarthy2012differential" class="csl-entry">
 McCarthy, Davis J, Yunshun Chen, and Gordon K Smyth. 2012. <span>“Differential Expression Analysis of Multifactor RNA-Seq Experiments with Respect to Biological Variation.”</span> <em>Nucleic Acids Research</em> 40 (10): 4288–97.
+</div>
+<div id="ref-morgan2021summarized" class="csl-entry">
+Morgan, Martin, Valerie Obenchain, Jim Hester, and Hervé Pagès. 2021. <em>SummarizedExperiment: SummarizedExperiment Container</em>.
 </div>
 <div id="ref-newman2015robust" class="csl-entry">
 Newman, Aaron M, Chih Long Liu, Michael R Green, Andrew J Gentles, Weiguo Feng, Yue Xu, Chuong D Hoang, Maximilian Diehn, and Ash A Alizadeh. 2015. <span>“Robust Enumeration of Cell Subsets from Tissue Expression Profiles.”</span> <em>Nature Methods</em> 12 (5): 453–57.
