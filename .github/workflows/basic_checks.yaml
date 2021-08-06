@@ -3,6 +3,7 @@ on: [push]
 env:
   cache-version: v2
   repo-name: stemangiola/bioc2021_tidytranscriptomics
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   job1:
