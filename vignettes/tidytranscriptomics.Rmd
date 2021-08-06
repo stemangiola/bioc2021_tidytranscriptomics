@@ -54,19 +54,20 @@ Recommended Background Reading
 
 ### Time outline
 
-This workshop is a 1.5 hour session.
+This workshop is a 1.5 hour session. 
+
 
 Guide
 
 | Activity - Hands on demos with challenges and Q&A                  | Time |
 |--------------------------------------------------------------------|------|
-| Part 1 Bulk RNA-seq with tidySingleCellExperiment and tidybulk     |  45  |
+| Part 1 Bulk RNA-seq with tidySummarizedExperiment and tidybulk     |  45  |
 | Part 2 Single-cell RNA-seq with tidySingleCellExperiment           |  45  |
 | Total                                                              |  90m |
 
 <br>
 **Format**: Hands on demos, challenges plus Q&A  
-**Interact**: Zoom chat, Menti quiz for challenges
+**Interact**: Airmeet for questions, Menti quiz for challenges
 <br>
 <br>
 
@@ -74,7 +75,7 @@ Guide
 
 #### Learning goals
 
-* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySingleCellExperiment, tidybulk and tidySummarizedExperiment.
+* To understand how transcriptomic data can be represented and analysed according to the tidy data paradigm with tidySummarizedExperiment, tidybulk and tidySingleCellExperiment.
 
 #### Learning objectives
 
@@ -94,7 +95,7 @@ Guide
 
 First we have a few questions for you, the audience.
 
-Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the [Google doc]((https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
+Please either open a tab in your browser or use your phone. Go to Menti (www.menti.com) and type the code given in the [Google doc](https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
 
 Then please rate the following on a scale of 1-5 (1=no/none, 5=yes/a lot)
 
@@ -186,7 +187,7 @@ knitr::include_graphics("../inst/vignettes/tidyverse.png")
 
 Easiest way to run this material. Only available during workshop. 
 
- * Login to workshop as per the instructions in the [Google doc]((https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
+ * Login to workshop as per the instructions in the [Google doc](https://docs.google.com/document/d/151UE3tOeYLnRJRPPNZA-UD13E5QWUg470BWbHOJ5CPA/edit?usp=sharing).
  * Open `tidytranscriptomics.Rmd` in `bioc2021_tidytranscriptomcs/vignettes` folder
  
 
@@ -269,7 +270,7 @@ custom_theme <-
 
 ### tidySummarizedExperiment
 
-tidySummarizedExperiment provides a bridge between Bioconductor [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) [@morgan2020summarized] and the tidyverse [@wickham2019welcome]. It enables viewing the
+tidySummarizedExperiment provides a bridge between Bioconductor [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) [@morgan2021summarized] and the tidyverse [@wickham2019welcome]. It enables viewing the
 Bioconductor *SummarizedExperiment* object as a tidyverse tibble, and provides SummarizedExperiment-compatible *dplyr*, *tidyr*, *ggplot* and *plotly* functions. This allows users to get the best of both Bioconductor and tidyverse worlds.
 
 
@@ -745,7 +746,7 @@ library(tidySingleCellExperiment)
 
 ## Introduction to tidySingleCellExperiment
 
-The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (PBMC) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in [SingleCellExperiment](https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) format. SingleCellExperiment is a very popular container of single-cell RNA sequencing data.
+The single-cell RNA sequencing data used here is 3000 cells in total, subsetted from 20 samples from 10 peripheral blood mononuclear cell (PBMC) datasets. The datasets are from GSE115189/SRR7244582 [@Freytag2018], SRR11038995 [@Cai2020, SCP345 (singlecell.broadinstitute.org), SCP424 [@Ding2020], SCP591 [@Karagiannis2020] and 10x-derived 6K and 8K datasets (support.10xgenomics.com/). The data is in [SingleCellExperiment](https://www.bioconductor.org/packages/release/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) format [@Amezquita2019]. SingleCellExperiment is a very popular container of single-cell RNA sequencing data.
 
 Similar to what we saw with tidySummarizedExperiment, `tidySingleCellExperiment` package enables any *SingleCellExperiment* object to be displayed and manipulated according to tidy data principles without affecting any *SingleCellExperiment* behaviour.
 
